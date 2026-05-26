@@ -1,0 +1,77 @@
+.not-found {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px 72px;
+  min-height: min(70vh, 640px);
+}
+
+.not-found--standalone {
+  flex: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg-main);
+}
+
+.not-found__card {
+  width: 100%;
+  max-width: 440px;
+  padding: 40px 32px 36px;
+  text-align: center;
+}
+
+.not-found__code {
+  margin: 0 0 16px;
+  font-family: 'Druk Wide', 'Inter', system-ui, sans-serif;
+  font-size: clamp(72px, 18vw, 112px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
+}
+
+.not-found__message {
+  margin: 0 0 28px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.not-found__home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200px;
+  padding: 14px 28px;
+  border-radius: 43px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  font-variation-settings: 'wght' 600;
+  letter-spacing: -0.48px;
+  text-decoration: none;
+  color: var(--on-accent);
+  background: var(--accent);
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.not-found__home-btn:hover {
+  filter: brightness(1.06);
+}
+
+.not-found__home-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.not-found__home-btn:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 480px) {
+  .not-found__card {
+    padding: 32px 22px 28px;
+  }
+}

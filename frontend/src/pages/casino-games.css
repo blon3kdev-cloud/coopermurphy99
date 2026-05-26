@@ -1,0 +1,2256 @@
+/* ═══════════════════════════════════════════════════════════
+   Kasyno lobby
+   ═══════════════════════════════════════════════════════════ */
+
+.kasyno-lobby {
+  width: 100%;
+  padding: 0 20px 48px;
+  display: flex;
+  justify-content: center;
+}
+
+.kasyno-lobby__inner {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.kasyno-thumb-group {
+  margin-bottom: 28px;
+}
+
+.kasyno-thumb-group__label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+}
+
+.kasyno-thumb-group__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(192px, 1fr));
+  gap: clamp(14px, 2vw, 18px);
+}
+
+@media (max-width: 767px) {
+  .kasyno-thumb-group__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .kasyno-thumb-group__grid > * {
+    box-sizing: border-box;
+    flex: 0 0 calc(50% - 6px);
+    width: calc(50% - 6px);
+    max-width: calc(50% - 6px);
+  }
+}
+
+@media (min-width: 720px) {
+  .kasyno-thumb-group__grid {
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  }
+}
+
+.kasyno-thumb-cell {
+  /* reset button defaults */
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  /* layout */
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  border-radius: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  aspect-ratio: 340 / 480;
+  position: relative;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.kasyno-thumb-cell:hover {
+  transform: translateY(-6px);
+}
+
+.kasyno-thumb-cell__tilt {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kasyno-thumb-cell,
+  .kasyno-thumb-cell__tilt {
+    transition: none;
+  }
+
+  .kasyno-thumb-cell:hover {
+    transform: none;
+  }
+}
+
+.kasyno-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.kasyno-thumb-cell--disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.kasyno-coming-soon {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kasyno-coming-soon__veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.kasyno-coming-soon__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  text-align: center;
+}
+
+.kasyno-coming-soon__lock {
+  width: clamp(30px, 9vw, 40px);
+  height: clamp(30px, 9vw, 40px);
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.kasyno-coming-soon__label {
+  font-size: clamp(13px, 3.2vw, 15px);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(250, 250, 250, 0.95);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Casino game wrapper
+   ═══════════════════════════════════════════════════════════ */
+
+.casino-game-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 48px 0px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CryptoCasinoShell
+   ═══════════════════════════════════════════════════════════ */
+
+.crypto-casino-mount {
+  width: 100%;
+  min-width: 0;
+}
+
+.crypto-casino-mount[hidden] {
+  display: none !important;
+}
+
+.crypto-casino {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: min(82dvh, 720px);
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+/* Top row: reuse CategoryPageHeader chevron + title (CategoryPageHeader.css) */
+.crypto-casino__topbar {
+  flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 16px 10px;
+}
+
+.crypto-casino__topbar .category-page-header__inner {
+  max-width: none;
+}
+
+.crypto-casino__topbar .category-page-header__back {
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.crypto-casino__upper {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+}
+
+.crypto-casino__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+@media (min-width: 520px) {
+  .crypto-casino__body {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 12px;
+  }
+}
+
+.crypto-casino__play {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* Mobile: game above sidebar (sidebar is first in DOM for desktop row layout). */
+  order: 1;
+}
+
+@media (min-width: 520px) {
+  .crypto-casino__play {
+    order: unset;
+    margin: 10px 10px 10px 0;
+  }
+}
+
+.crypto-casino__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px 18px 22px;
+  box-sizing: border-box;
+  background: #1b1b1b;
+  flex-shrink: 0;
+  border: none;
+  /* Figma 100:542 — panel */
+  border-radius: 24px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+  order: 2;
+}
+
+@media (min-width: 520px) {
+  .crypto-casino__sidebar {
+    order: unset;
+    width: min(100%, 320px);
+    margin: 10px 0 10px 10px;
+    align-self: stretch;
+  }
+}
+
+@media (min-width: 900px) {
+  .crypto-casino__sidebar {
+    width: min(100%, 400px);
+    padding: 22px 22px 24px;
+  }
+}
+
+.crypto-casino__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.crypto-casino__sidebar .crypto-casino__field {
+  gap: 12px;
+}
+
+.crypto-casino__row-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary);
+}
+
+.crypto-casino__sidebar > .crypto-casino__field:first-child .crypto-casino__row-label {
+  font-size: clamp(16px, 2.8vw, 20px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #707070;
+}
+
+.crypto-casino__fiat-hint {
+  font-weight: 600;
+  color: var(--text-primary);
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+
+.crypto-casino__bet-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.crypto-casino__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.crypto-casino__sidebar .crypto-casino__input-wrap--bet {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.crypto-casino__input {
+  width: 100%;
+  padding: 12px 44px 12px 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.crypto-casino__sidebar .crypto-casino__input {
+  padding: 14px 48px 14px 16px;
+  border-radius: 12px;
+  background: #0d0d0d;
+  font-size: clamp(16px, 2.5vw, 20px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  box-shadow:
+    inset 0 4px 1px rgba(0, 0, 0, 0.75),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.crypto-casino__sidebar .crypto-casino__input:focus {
+  outline: none;
+  box-shadow:
+    inset 0 4px 1px rgba(0, 0, 0, 0.75),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 0 2px rgba(255, 214, 58, 0.28);
+}
+
+.crypto-casino__input--readonly {
+  opacity: 0.85;
+  cursor: default;
+  color: var(--text-secondary);
+}
+
+.crypto-casino__input-suffix {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.crypto-casino__input-suffix--icon {
+  right: 14px;
+}
+
+.crypto-casino__fiat-hint--chip .currency-ico {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+}
+
+.crypto-casino__input-suffix--icon .currency-ico {
+  display: block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.crypto-casino__chip-row {
+  display: flex;
+  gap: 10px;
+}
+
+.crypto-casino__chip {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.crypto-casino__sidebar .crypto-casino__chip {
+  position: relative;
+  min-height: 45px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #313131;
+  font-size: clamp(15px, 2.4vw, 20px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  box-shadow:
+    0 8px 0 #252525,
+    0 13px 7px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.22);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.crypto-casino__sidebar .crypto-casino__chip:hover {
+  filter: brightness(1.06);
+}
+
+.crypto-casino__sidebar .crypto-casino__chip:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 4px 0 #252525,
+    0 8px 5px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crypto-casino__sidebar .crypto-casino__chip {
+    transition: none;
+  }
+
+  .crypto-casino__sidebar .crypto-casino__chip:active {
+    transform: none;
+  }
+}
+
+.crypto-casino__chip:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.crypto-casino__sidebar .crypto-casino__chip:hover {
+  background: #313131;
+}
+
+.crypto-casino__chip--grow {
+  width: 100%;
+}
+
+.crypto-casino__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.crypto-casino__err {
+  font-size: 0.78rem;
+  color: #ef4444;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.crypto-casino__err[hidden] {
+  display: none !important;
+}
+
+.crypto-casino__btn {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
+}
+
+.crypto-casino__sidebar .crypto-casino__btn {
+  position: relative;
+  min-height: 48px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: clamp(16px, 2.5vw, 20px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.35),
+    0 13px 7px rgba(0, 0, 0, 0.22),
+    inset 0 2px 5px rgba(255, 255, 255, 0.18);
+}
+
+.crypto-casino__btn:active {
+  transform: scale(0.98);
+}
+
+.crypto-casino__sidebar .crypto-casino__btn:active {
+  transform: translateY(5px) scale(0.99);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crypto-casino__sidebar .crypto-casino__btn:active {
+    transform: scale(0.98);
+  }
+}
+
+.crypto-casino__btn--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.crypto-casino__btn--primary:hover {
+  filter: brightness(1.06);
+}
+
+.crypto-casino__btn--cashout {
+  background: #2563eb;
+  color: #fff;
+}
+
+.crypto-casino__btn--loading {
+  pointer-events: none;
+  opacity: 0.45;
+  color: transparent !important;
+  position: relative;
+}
+
+.crypto-casino__btn--loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.25);
+  border-top-color: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  animation: btn-spin 0.65s linear infinite;
+}
+
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+.crypto-casino__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 18px;
+  background: transparent;
+}
+
+@media (min-width: 520px) {
+  .crypto-casino__main {
+    min-height: 360px;
+  }
+}
+
+.crypto-casino__game-view {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.crypto-casino__stage {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.crypto-casino__keno-util-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* variant button colours — Figma keno “Postaw” (#30d158, dark label, green depth shadow) */
+.crypto-casino--keno .crypto-casino__btn--primary {
+  background: #30d158;
+  color: #1b1b1b;
+  box-shadow:
+    0 8px 0 #2c9948,
+    0 13px 7px rgba(0, 0, 0, 0.25),
+    inset 0 2px 6px rgba(255, 255, 255, 0.25);
+}
+
+.crypto-casino--keno .crypto-casino__btn--primary:hover {
+  filter: brightness(1.05);
+}
+
+.crypto-casino--keno .crypto-casino__btn--primary:active {
+  box-shadow:
+    0 3px 0 #2c9948,
+    0 8px 5px rgba(0, 0, 0, 0.2),
+    inset 0 1px 4px rgba(255, 255, 255, 0.2);
+}
+
+.crypto-casino--keno .crypto-casino__btn--loading::after {
+  border: 2.5px solid rgba(27, 27, 27, 0.2);
+  border-top-color: rgba(27, 27, 27, 0.75);
+}
+
+.crypto-casino--limbo .crypto-casino__btn--primary {
+  background: #f97316;
+  color: #fff;
+  box-shadow:
+    0 8px 0 #c2410c,
+    0 13px 7px rgba(0, 0, 0, 0.25),
+    inset 0 2px 6px rgba(255, 255, 255, 0.2);
+}
+
+.crypto-casino--limbo .crypto-casino__btn--primary:hover {
+  filter: brightness(1.08);
+}
+
+.crypto-casino--limbo .crypto-casino__btn--primary:active {
+  box-shadow:
+    0 3px 0 #c2410c,
+    0 8px 5px rgba(0, 0, 0, 0.2),
+    inset 0 1px 4px rgba(255, 255, 255, 0.15);
+}
+
+.crypto-casino--dice .crypto-casino__btn--primary {
+  background: #2563eb;
+  color: #fff;
+  box-shadow:
+    0 8px 0 #1d4ed8,
+    0 13px 7px rgba(0, 0, 0, 0.25),
+    inset 0 2px 6px rgba(255, 255, 255, 0.2);
+}
+
+.crypto-casino--dice .crypto-casino__btn--primary:hover {
+  filter: brightness(1.08);
+}
+
+.crypto-casino--dice .crypto-casino__btn--primary:active {
+  box-shadow:
+    0 3px 0 #1d4ed8,
+    0 8px 5px rgba(0, 0, 0, 0.2),
+    inset 0 1px 4px rgba(255, 255, 255, 0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Result modal overlay
+   ═══════════════════════════════════════════════════════════ */
+
+.crypto-casino-result {
+  position: absolute;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.crypto-casino-result--visible {
+  opacity: 1;
+  pointer-events: none;
+}
+
+.crypto-casino-result__card {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  min-width: 0;
+  width: min(204px, calc(100% - 8px));
+  max-width: 100%;
+  padding: 16px 14px 17px;
+  border-radius: 16px;
+  background: #131318;
+  border: 3px solid transparent;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  transform: translateY(6px) scale(0.96);
+  pointer-events: none;
+  transition:
+    transform 0.24s cubic-bezier(0.25, 0.1, 0.25, 1),
+    box-shadow 0.24s ease,
+    border-color 0.2s ease;
+}
+
+.crypto-casino-result--visible .crypto-casino-result__card {
+  transform: translateY(0) scale(1);
+}
+
+.crypto-casino-result__card--win {
+  border-color: #00e701;
+  box-shadow: 0 0 16px rgba(0, 231, 1, 0.12), 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.crypto-casino-result__card--loss {
+  border-color: #e9113c;
+  box-shadow: 0 0 16px rgba(233, 17, 60, 0.1), 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.crypto-casino-result__card--tie {
+  border-color: #f97316;
+  box-shadow: 0 0 16px rgba(249, 115, 22, 0.14), 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.crypto-casino-result__mult {
+  font-size: clamp(20px, 5.5vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-align: center;
+  line-height: 1.05;
+}
+
+.crypto-casino-result__card--win .crypto-casino-result__mult { color: #00e701; }
+.crypto-casino-result__card--loss .crypto-casino-result__mult { color: #e9113c; }
+.crypto-casino-result__card--tie .crypto-casino-result__mult { color: #f97316; }
+
+.crypto-casino-result__rule {
+  width: min(62%, 120px);
+  height: 1px;
+  margin: 11px auto;
+  padding: 0;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.crypto-casino-result__amt-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.crypto-casino-result__coin {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.crypto-casino-result__amt {
+  font-size: clamp(13px, 3.4vw, 15px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.crypto-casino-result__card--win .crypto-casino-result__amt { color: #00e701; }
+.crypto-casino-result__card--loss .crypto-casino-result__amt { color: #e9113c; }
+.crypto-casino-result__card--tie .crypto-casino-result__amt { color: #f97316; }
+
+.crypto-casino-result__coin .currency-ico {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Keno game
+   ═══════════════════════════════════════════════════════════ */
+
+.keno {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  container-type: inline-size;
+  container-name: keno;
+  --keno-base: #1c1c1c;
+  --keno-base-edge: #141414;
+  --keno-sel-top: #36d95c;
+  --keno-sel-mid: #30d158;
+  --keno-sel-deep: #2c9948;
+  --keno-sel-edge: #2c9948;
+  --keno-stray: #f87171;
+  --keno-hit-num: #1b1b1b;
+}
+
+.keno--anim-reset .keno__tile-bg {
+  animation: none !important;
+}
+
+.keno__grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-auto-rows: auto;
+  align-content: start;
+  justify-items: stretch;
+  gap: 5px;
+  width: 100%;
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+.keno__tile-wrap {
+  position: relative;
+  display: flex;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  border-radius: 8px;
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.keno__tile-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: var(--keno-base);
+  border-bottom: 5px solid var(--keno-base-edge);
+  box-sizing: border-box;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.keno__bg-gem {
+  width: 52%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  opacity: 0;
+  transform: scale(0);
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .keno__bg-gem {
+    width: 70%;
+  }
+}
+
+.keno__tile {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--keno-base);
+  border-bottom: 5px solid var(--keno-base-edge);
+  box-sizing: border-box;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(21px, 4vw, 30px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease,
+    transform 0.1s ease,
+    border-color 0.12s ease,
+    filter 0.12s ease;
+}
+
+.keno__tile-num {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 519px) {
+  .keno__tile {
+    font-size: clamp(13px, 3.1vw, 16px);
+    letter-spacing: -0.02em;
+  }
+}
+
+@container keno (max-width: 380px) {
+  .keno__tile {
+    font-size: clamp(11px, 4.2cqw, 14px);
+  }
+}
+
+.keno__tile:hover { filter: brightness(1.05); }
+
+.keno__tile--selected {
+  color: #1b1b1b;
+  background-color: var(--keno-sel-mid);
+  border-bottom-color: var(--keno-sel-edge);
+}
+
+.keno__tile--selected:active {
+  transform: translateY(1px);
+  border-bottom-width: 3px;
+}
+
+.keno__tile--hit {
+  background-color: transparent;
+  border-color: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+  color: var(--keno-hit-num);
+}
+
+.keno__tile--hit .keno__tile-num {
+  color: var(--keno-hit-num);
+  font-weight: 800;
+}
+
+.keno__tile--stray {
+  color: var(--keno-stray);
+  background-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.keno__tile-wrap:has(.keno__tile--stray) {
+  background: #111;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55), inset 0 2px 9px rgba(0, 0, 0, 0.42);
+}
+
+.keno__tile-wrap:has(.keno__tile--stray) .keno__tile-bg {
+  animation: keno-stray-shrink 0.26s cubic-bezier(0.4, 0, 0.8, 0.6) forwards;
+}
+
+@keyframes keno-stray-shrink {
+  from { transform: scale(1); }
+  to   { transform: scale(0); }
+}
+
+.keno__tile-wrap:has(.keno__tile--hit) .keno__tile-bg {
+  background-color: #0a1a0f;
+  border-bottom-color: var(--keno-sel-edge);
+  animation: keno-hit-bg 0.44s ease-out forwards;
+}
+
+@keyframes keno-hit-bg {
+  0%   { box-shadow: none; border-bottom-width: 5px; border-bottom-color: var(--keno-sel-edge); }
+  30%  { box-shadow: inset 0 0 0 5px var(--keno-sel-mid); border-bottom-width: 5px; border-bottom-color: var(--keno-sel-edge); }
+  100% { box-shadow: inset 0 0 0 2px var(--keno-sel-mid); border-bottom-width: 5px; border-bottom-color: var(--keno-sel-edge); }
+}
+
+@keyframes keno-gem-pop {
+  0%   { opacity: 0; transform: scale(0)    rotate(0deg); }
+  28%  { opacity: 1; transform: scale(1.28) rotate(9deg); }
+  50%  {             transform: scale(0.89) rotate(-6deg); }
+  68%  {             transform: scale(1.07) rotate(2.5deg); }
+  83%  {             transform: scale(0.97) rotate(-0.5deg); }
+  100% { opacity: 1; transform: scale(1)    rotate(0deg); }
+}
+
+.keno__bottom-wrap {
+  width: 100%;
+  overflow: visible;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.keno__stats {
+  display: flex;
+  gap: 3px;
+  width: 100%;
+  min-height: 52px;
+  align-items: stretch;
+  font-family: inherit;
+}
+
+.keno__stats-hint {
+  flex: 1;
+  margin: 0;
+  padding: 10px 12px;
+  background: #1a1a1a;
+  border-radius: 6px;
+  text-align: center;
+  font-size: clamp(11px, 1.9vw, 13px);
+  font-weight: 500;
+  color: #444;
+}
+
+.keno__stat-pill {
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border-radius: 6px;
+  background: #1a1a1a;
+  transition: background 0.15s ease;
+}
+
+.keno__stat-count {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: clamp(9px, 1.6vw, 12px);
+  font-weight: 700;
+  color: #444;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.keno__gem--xs {
+  display: block;
+  width: clamp(11px, 1.9vw, 15px);
+  height: clamp(11px, 1.9vw, 15px);
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: grayscale(1) opacity(0.35);
+  transition: filter 0.15s ease;
+}
+
+.keno__stat-mult {
+  font-size: clamp(10px, 1.85vw, 14px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: #888;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.keno__stat-pill--active { background: #1a3324; }
+.keno__stat-pill--active .keno__stat-count { color: #30d158; }
+.keno__stat-pill--active .keno__gem--xs { filter: none; }
+.keno__stat-pill--active .keno__stat-mult { color: #fff; }
+
+/* ═══════════════════════════════════════════════════════════
+   Casino stat inputs (Figma: Szanse wygranej — node 100:979)
+   ═══════════════════════════════════════════════════════════ */
+
+.casino-stat-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.casino-stat-field__label {
+  font-size: clamp(16px, 2.5vw, 20px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #707070;
+}
+
+.casino-stat-field__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.crypto-casino__sidebar .casino-stat-field {
+  gap: 10px;
+}
+
+.casino-stat-field__suffix--icon .currency-ico {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
+
+.casino-stat-field__box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 55px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  background: #1b1b1b;
+  box-shadow:
+    0 8px 0 #252525,
+    0 13px 6.7px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+}
+
+.casino-stat-field__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(16px, 2.5vw, 20px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  padding: 0;
+}
+
+.casino-stat-field__input:focus {
+  outline: none;
+}
+
+.casino-stat-field__input--readonly {
+  cursor: default;
+}
+
+.casino-stat-field__suffix {
+  flex-shrink: 0;
+  font-size: clamp(16px, 2.5vw, 20px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #707070;
+  pointer-events: none;
+}
+
+.casino-stat-field__flip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #707070;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.casino-stat-field__flip:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Limbo game
+   ═══════════════════════════════════════════════════════════ */
+
+.limbo {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  gap: 0;
+}
+
+.limbo__history {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  justify-content: flex-end;
+  padding: 4px 2px 6px;
+  min-height: 30px;
+  overflow: hidden;
+}
+
+.limbo__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.limbo__pill--win  { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+.limbo__pill--lose { background: rgba(255, 255, 255, 0.06); color: #6b7a8a; }
+
+.limbo__stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.limbo__mult {
+  font-size: clamp(52px, 9vw, 96px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: #e2eaf2;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+.limbo__mult[data-state="win"]  { color: #4ade80; }
+.limbo__mult[data-state="lose"] { color: #f87171; }
+
+.limbo__controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 8px 0 2px;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Crash game
+   ═══════════════════════════════════════════════════════════ */
+
+.crypto-casino--crash .crypto-casino__btn--primary {
+  background: #f97316;
+  color: #fff;
+  box-shadow:
+    0 8px 0 #c2410c,
+    0 13px 7px rgba(0, 0, 0, 0.25),
+    inset 0 2px 6px rgba(255, 255, 255, 0.2);
+}
+
+.crypto-casino--crash .crypto-casino__btn--primary:hover {
+  filter: brightness(1.08);
+}
+
+.crypto-casino--crash .crypto-casino__btn--cashout {
+  display: none !important;
+}
+
+.crypto-casino--crash .casino-stat-field__opt {
+  margin-left: 2px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.crypto-casino--crash .casino-stat-field__input--unset {
+  color: #64748b;
+}
+
+.crypto-casino--crash .crypto-casino__btn--primary.crypto-casino__btn--crash-cancel {
+  background: #ef4444;
+  color: #fff;
+  box-shadow:
+    0 8px 0 #b91c1c,
+    0 13px 7px rgba(0, 0, 0, 0.25),
+    inset 0 2px 6px rgba(255, 255, 255, 0.18);
+}
+
+.crypto-casino--crash .crypto-casino__btn--primary.crypto-casino__btn--crash-cancel:hover {
+  filter: brightness(1.06);
+}
+
+.crypto-casino--crash .crypto-casino__btn--primary.crypto-casino__btn--crash-cashout {
+  background: #22c55e;
+  color: #0f172a;
+  font-weight: 800;
+  box-shadow:
+    0 8px 0 #15803d,
+    0 13px 7px rgba(0, 0, 0, 0.25),
+    inset 0 2px 6px rgba(255, 255, 255, 0.22);
+}
+
+.crypto-casino--crash .crypto-casino__btn--primary.crypto-casino__btn--crash-cashout:hover {
+  filter: brightness(1.05);
+}
+
+.crash {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+}
+
+.crash__history {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  justify-content: flex-end;
+  padding: 4px 2px 6px;
+  min-height: 30px;
+  overflow: hidden;
+}
+
+.crash__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.crash__pill--win  { background: rgba(0, 231, 1, 0.14); color: #00e701; }
+.crash__pill--lose { background: rgba(255, 255, 255, 0.06); color: #6b7a8a; }
+
+.crash__stage {
+  position: relative;
+  flex: 1;
+  min-height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: transparent;
+}
+
+.crash__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.crash__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  gap: 8px;
+}
+
+.crash__mult {
+  font-size: clamp(52px, 9.5vw, 104px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  user-select: none;
+  z-index: 1;
+}
+
+.crash__mult[data-state="running"] {
+  color: #fff;
+}
+
+.crash__mult[data-state="crashed"] {
+  color: #f87171;
+}
+
+.crash__status {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+.crash__status[data-tone="wait"] {
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+}
+
+.crash__status[data-tone="crash"] {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Dice game
+   ═══════════════════════════════════════════════════════════ */
+
+.dice {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+}
+
+.dice__history {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  justify-content: flex-end;
+  padding: 4px 2px 6px;
+  min-height: 30px;
+  overflow: hidden;
+}
+
+.dice__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.dice__pill--win  { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+.dice__pill--lose { background: rgba(255, 255, 255, 0.06); color: #6b7a8a; }
+
+.dice__stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.dice__track-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.dice__track-container {
+  position: relative;
+  background: #232323;
+  border-radius: 999px;
+  padding: 10px 14px 12px;
+}
+
+.dice__bubble {
+  position: absolute;
+  top: -96px;
+  transform: translateX(-50%) translateY(10px) scale(0.78);
+  width: 74px;
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 42%),
+    conic-gradient(
+      from 225deg at 50% 36%,
+      #c6cfde 0deg 120deg,
+      #afb9cb 120deg 240deg,
+      #f0f4ff 240deg 360deg
+    );
+  clip-path: polygon(50% 2%, 96% 28%, 96% 70%, 50% 98%, 4% 70%, 4% 28%);
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.16s ease, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+}
+
+.dice__bubble::before {
+  content: '';
+  position: absolute;
+  inset: 5px 10px 31px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+  mix-blend-mode: soft-light;
+}
+
+.dice__bubble--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.dice__bubble--bounce {
+  animation: dice-bubble-bounce 220ms cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+@keyframes dice-bubble-bounce {
+  0%   { transform: translateX(-50%) translateY(0) scale(1); }
+  35%  { transform: translateX(-50%) translateY(0) scale(1.1); }
+  70%  { transform: translateX(-50%) translateY(0) scale(0.9); }
+  100% { transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+.dice__bubble--win  { color: #00e701; }
+.dice__bubble--lose { color: #e9113c; }
+
+.dice__scale {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 23px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  line-height: 1;
+}
+
+.dice__scale span {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(2px);
+  align-items: center;
+}
+
+.dice__scale span::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 11px solid #232323;
+}
+
+.dice__track {
+  position: relative;
+  height: 44px;
+  border-radius: 22px;
+  background: rgba(6, 12, 22, 0.9);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.dice__fill-lose {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  height: 10px;
+  transform: translateY(-50%);
+  border-radius: 5px;
+  background: #e9113c;
+  pointer-events: none;
+}
+
+.dice__fill-win {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  height: 10px;
+  transform: translateY(-50%);
+  border-radius: 5px;
+  background: #00e701;
+  pointer-events: none;
+}
+
+.dice__handle {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transform: translateX(-50%);
+  width: 44px;
+  background: linear-gradient(180deg, #5b9cf6 0%, #3a7ae0 100%);
+  border-radius: 7px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.35);
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  touch-action: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.dice__handle:active { cursor: grabbing; }
+
+.dice__handle-grip {
+  display: flex;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.dice__handle-line {
+  display: block;
+  width: 2px;
+  height: 13px;
+  background: rgba(18, 48, 120, 0.65);
+  border-radius: 2px;
+}
+
+.dice__controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 16px 0 2px;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+@media (max-width: 520px) {
+  .dice__controls {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Blackjack
+   ═══════════════════════════════════════════════════════════ */
+
+.crypto-casino--blackjack .crypto-casino__main {
+  padding: 0;
+  background: transparent;
+}
+
+.crypto-casino--blackjack .crypto-casino__btn--primary {
+  background: #1475e1;
+  color: #fff;
+  box-shadow:
+    0 8px 0 #0f5cb0,
+    0 13px 7px rgba(0, 0, 0, 0.25),
+    inset 0 2px 6px rgba(255, 255, 255, 0.2);
+}
+
+.crypto-casino--blackjack .crypto-casino__btn--primary:hover {
+  filter: brightness(1.06);
+}
+
+.crypto-casino--blackjack .crypto-casino__btn--primary:active {
+  box-shadow:
+    0 3px 0 #0f5cb0,
+    0 8px 5px rgba(0, 0, 0, 0.2),
+    inset 0 1px 4px rgba(255, 255, 255, 0.15);
+}
+
+.crypto-casino--blackjack .crypto-casino__btn--primary:disabled,
+.crypto-casino--blackjack .crypto-casino__btn--primary.crypto-casino__btn--disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: none;
+  box-shadow:
+    0 4px 0 #0f5cb0,
+    inset 0 1px 3px rgba(255, 255, 255, 0.12);
+}
+
+.crypto-casino__bj-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.crypto-casino__bj-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.crypto-casino__bj-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 12px;
+  background: #313131;
+  color: #f4f4f5;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow:
+    0 6px 0 #252525,
+    0 10px 6px rgba(0, 0, 0, 0.22),
+    inset 0 1px 2px rgba(255, 255, 255, 0.16);
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.crypto-casino__bj-btn:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.crypto-casino__bj-btn:active:not(:disabled) {
+  transform: translateY(3px);
+}
+
+.crypto-casino__bj-btn--disabled,
+.crypto-casino__bj-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.08);
+}
+
+.crypto-casino__bj-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+}
+
+.crypto-casino__bj-btn-icon--text {
+  width: auto;
+  min-width: 22px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.crypto-casino__bj-btn-svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.crypto-casino__bj-btn--hit .crypto-casino__bj-btn-icon {
+  color: #fbbf24;
+}
+
+.crypto-casino__bj-btn--stand .crypto-casino__bj-btn-icon {
+  color: #a78bfa;
+}
+
+.crypto-casino__bj-btn:disabled .crypto-casino__bj-btn-icon {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.bj {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+}
+
+.bj__table {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: min(58dvh, 520px);
+  padding: 28px 20px 36px;
+  background: transparent;
+}
+
+.bj--empty .bj__hand {
+  display: none;
+}
+
+.bj__deck {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  width: 92px;
+  height: 122px;
+  pointer-events: none;
+  transition: transform 0.25s ease;
+}
+
+.bj__deck--dealing {
+  transform: translateY(2px) scale(0.97);
+}
+
+.bj__deck-card {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.bj__deck-card--2 {
+  transform: translate(4px, 4px) rotate(2deg);
+}
+
+.bj__deck-card--3 {
+  transform: translate(8px, 8px) rotate(4deg);
+}
+
+.bj__hand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.bj__hand--dealer {
+  margin-top: 8px;
+}
+
+.bj__hand--player {
+  margin-bottom: 4px;
+}
+
+.bj__player-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+}
+
+.bj--split .bj__player-area {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 16px;
+  max-width: 100%;
+}
+
+.bj__split-hand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.bj__split-hand[hidden] {
+  display: none !important;
+}
+
+.bj__split-hand--inactive {
+  opacity: 0.55;
+  transform: scale(0.96);
+}
+
+.bj__split-hand--active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.bj--split .bj__split-hand .bj__cards {
+  min-height: 148px;
+}
+
+.bj--split .bj__split-hand .bj-card {
+  margin-left: calc(var(--bj-card-i, 0) * -22px);
+}
+
+@media (max-width: 519px) {
+  .bj--split .bj__player-area {
+    gap: 10px;
+  }
+
+  .bj--split .bj__split-hand .bj-card {
+    margin-left: calc(var(--bj-card-i, 0) * -18px);
+  }
+}
+
+.bj__score {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  min-height: 32px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #3a3a3a;
+  border: none;
+  color: #f8fafc;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.bj__score--win {
+  background: #00a63e;
+  color: #fff;
+}
+
+.bj__score--loss {
+  background: #dc2626;
+  color: #fff;
+}
+
+.bj__score--push {
+  background: #ea580c;
+  color: #fff;
+}
+
+.bj__score--pop {
+  animation: bj-score-pop 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes bj-score-pop {
+  0% { transform: scale(0.85); opacity: 0.6; }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.bj__cards {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 168px;
+  perspective: 1200px;
+}
+
+.bj-card {
+  position: relative;
+  width: clamp(96px, 20vw, 132px);
+  margin-left: calc(var(--bj-card-i, 0) * -28px);
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.38));
+  transform-origin: center center;
+  z-index: calc(10 + var(--bj-card-i, 0));
+  --bj-fly-x: 0px;
+  --bj-fly-y: 0px;
+  --bj-muck-i: 0;
+}
+
+.bj-card:first-child {
+  margin-left: 0;
+}
+
+/* Start at deck (top-right), back face visible */
+.bj-card--from-deck {
+  opacity: 0.92;
+  transform: translate(var(--bj-fly-x), var(--bj-fly-y)) scale(0.88) rotate(-4deg);
+}
+
+.bj-card--flying {
+  opacity: 1;
+  transform: translate(0, 0) scale(1) rotate(0deg);
+  transition:
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease;
+}
+
+.bj-card--landed {
+  transform: translate(0, 0);
+}
+
+/* Outcome border on the outer card — not on __flip (overflow breaks 3D face-up) */
+.bj-card--outcome-win,
+.bj-card--outcome-loss,
+.bj-card--outcome-push {
+  border-radius: 12px;
+}
+
+.bj-card--outcome-win {
+  box-shadow:
+    0 12px 22px rgba(0, 0, 0, 0.38),
+    inset 0 0 0 8px #00e701;
+}
+
+.bj-card--outcome-loss {
+  box-shadow:
+    0 12px 22px rgba(0, 0, 0, 0.38),
+    inset 0 0 0 8px #e9113c;
+}
+
+.bj-card--outcome-push {
+  box-shadow:
+    0 12px 22px rgba(0, 0, 0, 0.38),
+    inset 0 0 0 8px #f97316;
+}
+
+/* Muck: return toward deck, staggered fade */
+.bj-card--muck {
+  opacity: 0;
+  transform: translate(var(--bj-fly-x), var(--bj-fly-y)) scale(0.8) rotate(3deg) !important;
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.bj-card__flip {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bj-card--face-up .bj-card__flip,
+.bj-card--revealing .bj-card__flip {
+  transform: rotateY(180deg);
+}
+
+.bj-card__face {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  backface-visibility: hidden;
+}
+
+.bj-card__face--front {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bj-card--from-deck,
+  .bj-card--flying,
+  .bj-card--muck {
+    opacity: 1;
+    transform: none !important;
+    transition: none;
+  }
+
+  .bj-card__flip {
+    transition: none;
+  }
+
+  .bj-card--face-up .bj-card__flip,
+  .bj-card--revealing .bj-card__flip {
+    transform: rotateY(180deg);
+  }
+
+  .bj__score--pop {
+    animation: none;
+  }
+
+  .bj__deck--dealing {
+    transform: none;
+  }
+}
+
+@media (max-width: 519px) {
+  .bj__table {
+    min-height: 48dvh;
+    padding: 20px 12px 28px;
+  }
+
+  .bj__deck {
+    width: 72px;
+    height: 96px;
+    right: 12px;
+  }
+
+  .bj__cards {
+    min-height: 140px;
+  }
+
+  .bj-card {
+    width: clamp(88px, 26vw, 112px);
+    margin-left: calc(var(--bj-card-i, 0) * -22px);
+  }
+}
+
+/* ── Blitz ─────────────────────────────────────────────────────────────────── */
+
+.casino-stat-field__box--stepper {
+  padding: 6px 8px;
+  gap: 0;
+}
+
+.casino-stat-field__step {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: #252525;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.casino-stat-field__step:hover:not(:disabled) {
+  background: #333;
+}
+
+.casino-stat-field__step:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.casino-stat-field__input--center {
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+.casino-stat-field__input--center::-webkit-outer-spin-button,
+.casino-stat-field__input--center::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.crypto-casino--blitz .crypto-casino__main {
+  min-height: 0;
+}
+
+.crypto-casino--blitz .crypto-casino__btn--primary {
+  background: #ec4899;
+  color: #fff;
+  box-shadow:
+    0 8px 0 #be185d,
+    0 13px 7px rgba(0, 0, 0, 0.25),
+    inset 0 2px 6px rgba(255, 255, 255, 0.25);
+}
+
+.crypto-casino--blitz .crypto-casino__btn--primary:hover {
+  filter: brightness(1.08);
+}
+
+.crypto-casino--blitz .crypto-casino__btn--primary:active {
+  box-shadow:
+    0 3px 0 #be185d,
+    0 8px 5px rgba(0, 0, 0, 0.2),
+    inset 0 1px 4px rgba(255, 255, 255, 0.2);
+}
+
+.crypto-casino--blitz .crypto-casino__btn--loading::after {
+  border: 2.5px solid rgba(255, 255, 255, 0.25);
+  border-top-color: rgba(255, 255, 255, 0.85);
+}
+
+.blitz {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+}
+
+.blitz__board {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 10px 16px;
+  min-height: 0;
+}
+
+.blitz__deck {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.blitz__grid {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  column-gap: 1px;
+  row-gap: 1px;
+  width: 100%;
+  perspective: 900px;
+}
+
+.blitz-card {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  aspect-ratio: 5 / 7;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: default;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+  margin: 0;
+  z-index: 1;
+}
+
+.blitz-card:disabled {
+  pointer-events: none;
+}
+
+.blitz--playing .blitz-card {
+  opacity: 0.92;
+}
+
+.blitz-card .bj-card__flip {
+  transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blitz-card .bj-card__face {
+  border-radius: 6px;
+}
+
+.blitz-card.bj-card--face-up,
+.blitz-card.bj-card--bust-red {
+  z-index: 2;
+}
+
+.bj-card--revealing-loss .bj-card__flip {
+  transform: rotateY(0deg);
+}
+
+.bj-card--bust-red .bj-card__flip {
+  transform: rotateY(0deg);
+}
+
+.blitz__progress {
+  flex-shrink: 0;
+  width: 100%;
+  height: 6px;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.blitz__progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 0;
+  background: #00e701;
+  transition: width 0.1s linear, background 0.1s linear;
+}
+
+.blitz__progress-fill--loss {
+  background: #e9113c;
+}
+
+@media (max-width: 519px) {
+  .blitz__grid {
+    column-gap: 1px;
+    row-gap: 1px;
+  }
+}

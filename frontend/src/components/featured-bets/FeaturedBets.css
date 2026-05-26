@@ -1,0 +1,284 @@
+.featured-bets {
+  width: 100%;
+  padding: 0 20px 48px;
+  display: flex;
+  justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.featured-bets__inner {
+  width: 100%;
+  max-width: min(1200px, 100%);
+  min-width: 0;
+}
+
+/* Figma 55:150 */
+.featured-bets__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  min-width: 0;
+}
+
+.featured-bets__heading {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 24px;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: -0.72px;
+  line-height: normal;
+  color: #fff;
+}
+
+.featured-bets__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/*
+ * Figma 55:75 — card column: image flex-1 + footer h-[126px] in a 340×340 cell
+ * → image area = 340×214 → aspect-ratio 340:214 (width : height)
+ * Locking this prevents flex from stretching the photo when the grid column is tall.
+ */
+.featured-bets__card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #1b1b1b;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured-bets__card {
+    transition: none;
+  }
+}
+
+.featured-bets__media {
+  position: relative;
+  width: 100%;
+  flex: 0 0 auto;
+  aspect-ratio: 340 / 214;
+  pointer-events: none;
+}
+
+.featured-bets__media-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.featured-bets__media-shade {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 -125px 72px -43px #1b1b1b,
+    inset 0 -60px 34.5px -22px #1b1b1b;
+}
+
+/* Figma 55:77 — h-[126px]; meta top-[-30px] overlaps image fade */
+.featured-bets__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0 22px 20px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.featured-bets__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: -30px;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.featured-bets__date-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  max-width: calc(100% - 20px);
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  font-size: 12px;
+  font-weight: 600;
+  font-variation-settings: 'wght' 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #f0f0f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+.featured-bets__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: -0.4px;
+  line-height: 1.25;
+  color: #fff;
+  word-break: break-word;
+}
+
+.featured-bets__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+  margin-top: 0;
+}
+
+@media (min-width: 768px) {
+  .featured-bets__actions {
+    margin-top: 12px;
+  }
+}
+
+.featured-bets__btn {
+  flex: 0 0 auto;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 43px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 51px;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: -0.54px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.featured-bets__btn-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.featured-bets__btn-odds {
+  flex-shrink: 0;
+}
+
+.featured-bets__btn:active {
+  transform: scale(0.98);
+}
+
+.featured-bets__btn--yes {
+  background: #ffd600;
+  color: #000;
+}
+
+.featured-bets__btn--no {
+  background: rgba(255, 214, 0, 0.1);
+  color: #ffd600;
+}
+
+.featured-bets__btn.featured-bets__btn--selected {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Figma 55:246 / 32:425 */
+.featured-bets__view-all {
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-sizing: border-box;
+  font: inherit;
+  background: #1b1b1b;
+  color: #fafafa;
+  font-size: 16px;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: -0.48px;
+  padding: 10px 15px;
+  border-radius: 32px;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.featured-bets__view-all-label--short {
+  display: none;
+}
+
+.featured-bets__view-all-label--long {
+  display: inline;
+}
+
+.featured-bets__view-all:hover {
+  background: #242424;
+}
+
+@media (max-width: 767px) {
+  .featured-bets__header {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .featured-bets__heading {
+    font-size: clamp(18px, 4.8vw, 21px);
+    letter-spacing: -0.54px;
+  }
+
+  .featured-bets__view-all {
+    padding: 8px 12px;
+    font-size: 14px;
+    letter-spacing: -0.42px;
+  }
+
+  .featured-bets__view-all-label--short {
+    display: inline;
+  }
+
+  .featured-bets__view-all-label--long {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .featured-bets__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .featured-bets__grid {
+    grid-template-columns: 1fr;
+  }
+}

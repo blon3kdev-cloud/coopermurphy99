@@ -1,0 +1,38 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('./assets/fonts/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Druk Wide';
+  src: url('./assets/fonts/DrukWideBold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg-main: #0d0d0d;
+  --bg-elevated: #161616;
+  --bg-muted: #202020;
+  --bg-input: #161616;
+  --accent: #FFD600;
+  --on-accent: #0a0a0a;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-main);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text-primary);
+}

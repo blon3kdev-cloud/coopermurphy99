@@ -1,0 +1,332 @@
+/* Labels: Inter. Headline numbers: `DrukWideBold.ttf` → `Druk Wide` (index.css). */
+.promo-banner {
+  width: 100%;
+  /* Top gutter only: fixed nav + `App__navbar-spacer` already clears the navbar */
+  padding: 28px 20px 40px;
+  display: flex;
+  justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.promo-banner__inner {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.promo-banner__viewport {
+  width: 100%;
+}
+
+.promo-banner__track {
+  display: flex;
+  width: 100%;
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.promo-banner__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.promo-banner__dots {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+}
+
+.promo-banner__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.promo-banner__dot[aria-selected='true'] {
+  background: rgba(255, 255, 255, 0.92);
+  transform: scale(1.15);
+}
+
+.promo-banner__dot:focus-visible {
+  outline: 2px solid rgba(255, 214, 0, 0.55);
+  outline-offset: 2px;
+}
+
+.promo-banner__card {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #1b1b1b;
+  isolation: isolate;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  outline-offset: 3px;
+  transition: transform 0.35s ease;
+}
+
+.promo-banner__card:hover {
+  transform: translateY(-2px);
+}
+
+.promo-banner__card:focus-visible {
+  outline: 2px solid rgba(255, 214, 0, 0.55);
+}
+
+/* Figma 19:79 — large rotated radial blob centered at bottom-center */
+.promo-banner__wash {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  transform-origin: 50% 100%;
+  transition:
+    transform 0.45s ease,
+    filter 0.45s ease,
+    opacity 0.45s ease;
+  background:
+    radial-gradient(
+      ellipse 115% 80% at 52% 108%,
+      var(--wash-bright) 0%,
+      var(--wash-mid) 28%,
+      var(--wash-deep) 52%,
+      transparent 78%
+    ),
+    linear-gradient(0deg, var(--wash-base) 0%, transparent 55%);
+  animation: promo-banner-wash-drift 18s ease-in-out infinite;
+}
+
+@keyframes promo-banner-wash-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.96;
+  }
+
+  50% {
+    transform: translateY(-1.5%);
+    opacity: 1;
+  }
+}
+
+.promo-banner__card:hover .promo-banner__wash {
+  animation-play-state: paused;
+  transform: scale(1.03) translateY(-1px);
+  filter: brightness(1.08) saturate(1.04);
+}
+
+.promo-banner__wash--blue {
+  --wash-bright: rgba(120, 215, 255, 0.85);
+  --wash-mid: rgba(0, 160, 255, 0.5);
+  --wash-deep: rgba(0, 80, 200, 0.18);
+  --wash-base: rgba(0, 130, 230, 0.22);
+}
+
+.promo-banner__wash--gold {
+  --wash-bright: rgba(255, 210, 60, 0.85);
+  --wash-mid: rgba(255, 157, 0, 0.5);
+  --wash-deep: rgba(180, 75, 0, 0.18);
+  --wash-base: rgba(255, 165, 25, 0.22);
+}
+
+.promo-banner__wash--purple {
+  --wash-bright: rgba(255, 110, 225, 0.85);
+  --wash-mid: rgba(200, 55, 200, 0.5);
+  --wash-deep: rgba(95, 40, 165, 0.18);
+  --wash-base: rgba(180, 60, 200, 0.22);
+}
+
+.promo-banner__card--media {
+  background: #1b1b1b;
+}
+
+.promo-banner__media {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 16px;
+}
+
+.promo-banner__media-img {
+  position: absolute;
+  width: 107.6%;
+  height: 107.57%;
+  max-width: none;
+  left: -5.41%;
+  top: -9.32%;
+  object-fit: cover;
+}
+
+/* Figma: linear-gradient 90deg rgba(0,0,0,0.2) + #1b1b1b */
+.promo-banner__media-scrim {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.2) 100%
+    ),
+    #1b1b1b;
+}
+
+.promo-banner__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 69px 28px 40px 44px;
+  min-height: 240px;
+  justify-content: flex-start;
+}
+
+.promo-banner__value {
+  margin: 0;
+  font-family: 'Druk Wide', system-ui, sans-serif;
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -0.56px;
+  line-height: 1;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  transform: scaleX(1.06);
+  transform-origin: 0 50%;
+  -webkit-font-smoothing: antialiased;
+  filter:
+    drop-shadow(0 4px 0 var(--value-outline))
+    drop-shadow(0 5px 0 var(--value-outline));
+}
+
+/* Figma 55:36 — ~179.58deg */
+.promo-banner__value--blue {
+  --value-outline: #082082;
+  background-image: linear-gradient(180deg, rgb(0, 170, 255) 15.36%, rgb(0, 149, 255) 81.85%);
+}
+
+/* Figma 55:44 */
+.promo-banner__value--gold {
+  --value-outline: #823b08;
+  background-image: linear-gradient(180deg, rgb(255, 157, 0) 15.36%, rgb(255, 214, 0) 81.85%);
+}
+
+/* Figma 55:57 — vertical magenta → purple (not horizontal) */
+.promo-banner__value--purple {
+  --value-outline: #3e0aa8;
+  background-image: linear-gradient(180deg, rgb(255, 0, 179) 15.36%, rgb(105, 49, 184) 81.85%);
+}
+
+/* Figma 55:35 — Open Runde Semibold 18px, mix-blend-plus-lighter */
+.promo-banner__label {
+  margin: 0;
+  max-width: min(100%, 280px);
+  font-size: 18px;
+  font-weight: 600;
+  font-variation-settings: 'wght' 600;
+  line-height: normal;
+  color: rgba(255, 255, 255, 0.7);
+  mix-blend-mode: plus-lighter;
+}
+
+@media (min-width: 901px) {
+  .promo-banner__track {
+    display: flex;
+    gap: 16px;
+    transform: none !important;
+    transition: none;
+  }
+
+  .promo-banner__slide {
+    flex: 1 1 0;
+  }
+
+  .promo-banner__card {
+    flex: 1 1 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .promo-banner {
+    padding: 14px 20px 20px;
+    overflow: hidden;
+    overflow-y: hidden;
+  }
+
+  .promo-banner__viewport {
+    overflow: hidden;
+    overflow-y: hidden;
+  }
+
+  /* Gap between slides during swipe; each slide stays viewport-wide and centered */
+  .promo-banner__slide {
+    flex: 0 0 100%;
+    padding: 0 6px;
+    box-sizing: border-box;
+  }
+
+  .promo-banner__dots {
+    display: flex;
+  }
+
+  .promo-banner__body {
+    min-height: 240px;
+    padding: 69px 28px 40px 44px;
+    gap: 22px;
+  }
+
+  .promo-banner__value {
+    font-size: 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  .promo-banner {
+    padding: 10px 16px 16px;
+  }
+
+  .promo-banner__body {
+    min-height: 240px;
+    padding: 69px 24px 40px 28px;
+  }
+
+  .promo-banner__value {
+    transform: scaleX(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promo-banner__track {
+    transition: none;
+  }
+
+  .promo-banner__card {
+    transition: none;
+  }
+
+  .promo-banner__card:hover {
+    transform: none;
+  }
+
+  .promo-banner__wash {
+    transition: none;
+    animation: none;
+  }
+
+  .promo-banner__card:hover .promo-banner__wash {
+    transform: none;
+    filter: none;
+  }
+}

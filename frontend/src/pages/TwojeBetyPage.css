@@ -1,0 +1,132 @@
+/* ── Page shell ──────────────────────────────────────────────────────────── */
+.yb__page {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px 80px;
+}
+
+.yb__inner {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.feed-scroll-sentinel {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0 24px;
+}
+
+.feed-scroll-sentinel__label {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Section — 2-column grid so heading/date align with the card ─────────── */
+.yb__section {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 14px;
+  row-gap: 10px;
+  align-items: start;
+}
+
+.yb__section--group {
+  position: relative;
+}
+
+.yb__col-spacer {
+  pointer-events: none;
+}
+
+.yb__section-heading,
+.yb__group-header {
+  grid-column: 2;
+}
+
+.yb__totals-card {
+  grid-column: 2;
+}
+
+.yb__section-heading {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  color: #fff;
+  letter-spacing: -0.96px;
+  line-height: normal;
+}
+
+/* ── Group header ────────────────────────────────────────────────────────── */
+.yb__group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.yb__group-date {
+  font-size: 32px;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  color: #fff;
+  letter-spacing: -0.96px;
+  line-height: normal;
+}
+
+.yb__group-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 215, 96, 0.1);
+  color: #1ed760;
+  font-size: 16px;
+  font-weight: 600;
+  font-variation-settings: 'wght' 600;
+  letter-spacing: -0.48px;
+  padding: 8px 16px;
+  border-radius: 47px;
+  line-height: normal;
+}
+
+@import '../components/bet-ticket/BetTicket.css';
+
+.yb__totals-card {
+  padding: 4px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .yb__page {
+    padding: 28px 16px 60px;
+  }
+
+  .yb__section {
+    grid-template-columns: 1fr;
+  }
+
+  .yb__col-spacer {
+    display: none;
+  }
+
+  .yb__section-heading,
+  .yb__group-header,
+  .yb__totals-card {
+    grid-column: 1;
+  }
+
+  .yb__section-heading,
+  .yb__group-date {
+    font-size: 26px;
+  }
+}

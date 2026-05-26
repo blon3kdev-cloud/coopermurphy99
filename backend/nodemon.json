@@ -1,0 +1,8 @@
+{
+  "watch": ["app", "bots"],
+  "ext": "py",
+  "ignore": ["**/__pycache__/**", ".venv/**"],
+  "exec": "sh scripts/start.sh",
+  "signal": "SIGTERM",
+  "delay": "300"
+}

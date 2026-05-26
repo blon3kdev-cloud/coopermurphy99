@@ -1,0 +1,20 @@
+{
+  "name": "czutka-backend",
+  "private": true,
+  "scripts": {
+    "deploy": "sh scripts/deploy.sh",
+    "start": "nodemon",
+    "start:api": "sh -c '.venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port ${PORT:-4000}'",
+    "test-payment": ".venv/bin/python scripts/test_payment.py",
+    "discover-solana": ".venv/bin/python scripts/discover_solana.py",
+    "verify-deposits": ".venv/bin/python scripts/verify_deposits.py",
+    "check-payment": ".venv/bin/python scripts/check_payment.py",
+    "sweep-payment": ".venv/bin/python scripts/sweep_payment.py",
+    "daily-isports-auto": ".venv/bin/python scripts/daily_isports_auto.py",
+    "bot:discord": ".venv/bin/python bots/discord_bot.py",
+    "bot:telegram": ".venv/bin/python bots/telegram_bot.py"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

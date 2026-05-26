@@ -1,0 +1,81 @@
+.category-page-header {
+  width: 100%;
+  padding: 8px 20px 24px;
+  display: flex;
+  justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.category-page-header__inner {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+}
+
+/* Same tap target + surface as .auth-modal__close; button like crypto-casino keno topbar */
+.category-page-header__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease;
+}
+
+.category-page-header__back:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.category-page-header__back:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 2px;
+}
+
+.category-page-header__back-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-page-header__back-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+/* Figma 50:698 — Open Runde approximated via Inter Bold */
+.category-page-header__title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: -0.96px;
+  line-height: normal;
+  color: #fff;
+}
+
+@media (max-width: 560px) {
+  .category-page-header {
+    padding-top: 12px;
+  }
+
+  .category-page-header__title {
+    font-size: 26px;
+    letter-spacing: -0.78px;
+  }
+}

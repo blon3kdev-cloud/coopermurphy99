@@ -1,0 +1,31 @@
+{
+  "teams": [
+    { "names": ["Canelo Alvarez", "Alvarez, Canelo", "Saul Alvarez"] },
+    { "names": ["Tyson Fury", "Fury, Tyson", "Fury"] },
+    { "names": ["Oleksandr Usyk", "Usyk, Oleksandr", "Usyk"] },
+    { "names": ["Anthony Joshua", "Joshua, Anthony", "Joshua"] },
+    { "names": ["Daniel Dubois", "Dubois, Daniel", "Dubois"] },
+    { "names": ["Deontay Wilder", "Wilder, Deontay", "Wilder"] },
+    { "names": ["Terence Crawford", "Crawford, Terence", "Crawford"] },
+    { "names": ["Errol Spence Jr", "Spence, Errol", "Errol Spence"] },
+    { "names": ["Naoya Inoue", "Inoue, Naoya", "Inoue"] },
+    { "names": ["Gervonta Davis", "Davis, Gervonta", "Tank Davis"] },
+    { "names": ["Devin Haney", "Haney, Devin", "Haney"] },
+    { "names": ["Ryan Garcia", "Garcia, Ryan", "Garcia"] },
+    { "names": ["Teofimo Lopez", "Lopez, Teofimo", "Lopez"] },
+    { "names": ["Shakur Stevenson", "Stevenson, Shakur", "Stevenson"] },
+    { "names": ["Jesse Rodriguez", "Rodriguez, Jesse", "Rodriguez"] },
+    { "names": ["Jermell Charlo", "Charlo, Jermell", "Charlo"] },
+    { "names": ["Jermall Charlo", "Charlo, Jermall"] },
+    { "names": ["Dmitry Bivol", "Bivol, Dmitry", "Bivol"] },
+    { "names": ["Artur Beterbiev", "Beterbiev, Artur", "Beterbiev"] },
+    { "names": ["Callum Smith", "Smith, Callum", "Smith"] },
+    { "names": ["David Benavidez", "Benavidez, David", "Benavidez"] },
+    { "names": ["Caleb Plant", "Plant, Caleb", "Plant"] },
+    { "names": ["Vasiliy Lomachenko", "Lomachenko, Vasiliy", "Lomachenko"] },
+    { "names": ["George Kambosos Jr", "Kambosos, George", "Kambosos"] },
+    { "names": ["Katie Taylor", "Taylor, Katie", "Taylor"] },
+    { "names": ["Claressa Shields", "Shields, Claressa", "Shields"] },
+    { "names": ["Amanda Serrano", "Serrano, Amanda", "Serrano"] }
+  ]
+}

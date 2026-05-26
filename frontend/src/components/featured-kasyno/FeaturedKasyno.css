@@ -1,0 +1,219 @@
+.featured-kasyno {
+  width: 100%;
+  padding: 0 20px 48px;
+  display: flex;
+  justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.featured-kasyno__inner {
+  width: 100%;
+  max-width: min(1200px, 100%);
+  min-width: 0;
+}
+
+.featured-kasyno__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  min-width: 0;
+}
+
+.featured-kasyno__heading {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 24px;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: -0.72px;
+  line-height: normal;
+  color: #fff;
+}
+
+/* Figma 32:425 — match featured bets CTA */
+.featured-kasyno__view-all {
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-sizing: border-box;
+  font: inherit;
+  background: #1b1b1b;
+  color: #fafafa;
+  font-size: 16px;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: -0.48px;
+  padding: 10px 15px;
+  border-radius: 32px;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.featured-kasyno__view-all:hover {
+  background: #242424;
+}
+
+.featured-kasyno__view-all-label--short {
+  display: none;
+}
+
+.featured-kasyno__view-all-label--long {
+  display: inline;
+}
+
+/* One row × 6 — equal fractions, minmax(0) avoids overlap from flex quirks */
+.featured-kasyno__row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: stretch;
+  gap: clamp(10px, 1.35vw, 16px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.featured-kasyno__item {
+  min-width: 0;
+  display: flex;
+}
+
+.featured-kasyno__card {
+  width: 100%;
+  aspect-ratio: 340 / 480;
+  border-radius: clamp(14px, 2vw, 18px);
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.featured-kasyno__card:hover {
+  transform: translateY(-6px);
+}
+
+.featured-kasyno__card-tilt {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured-kasyno__card,
+  .featured-kasyno__card-tilt {
+    transition: none;
+  }
+
+  .featured-kasyno__card:hover {
+    transform: none;
+  }
+}
+
+.featured-kasyno__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.featured-kasyno__card--soon {
+  cursor: default;
+  pointer-events: none;
+}
+
+.featured-kasyno__soon {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.featured-kasyno__soon-veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.featured-kasyno__soon-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.featured-kasyno__soon-lock {
+  width: clamp(26px, 7vw, 34px);
+  height: clamp(26px, 7vw, 34px);
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.featured-kasyno__soon-label {
+  font-size: clamp(11px, 2.8vw, 13px);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(250, 250, 250, 0.95);
+}
+
+@media (max-width: 767px) {
+  .featured-kasyno__header {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .featured-kasyno__heading {
+    font-size: clamp(18px, 4.8vw, 21px);
+    letter-spacing: -0.54px;
+  }
+
+  .featured-kasyno__view-all {
+    margin-left: 0;
+    padding: 8px 12px;
+    font-size: 14px;
+    letter-spacing: -0.42px;
+  }
+
+  .featured-kasyno__view-all-label--short {
+    display: inline;
+  }
+
+  .featured-kasyno__view-all-label--long {
+    display: none;
+  }
+
+  .featured-kasyno__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .featured-kasyno__item {
+    flex: 0 0 calc(50% - 4px);
+    width: calc(50% - 4px);
+    max-width: calc(50% - 4px);
+  }
+}

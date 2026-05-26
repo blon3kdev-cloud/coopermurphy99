@@ -1,0 +1,17 @@
+.currency-amount {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.currency-amount__chip {
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.currency-amount--admin .currency-amount__chip {
+  width: 14px;
+  height: 14px;
+}

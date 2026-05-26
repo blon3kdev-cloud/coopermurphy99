@@ -1,0 +1,21 @@
+.bety-explorer__header {
+  margin-bottom: 20px;
+}
+
+.feed-scroll-sentinel {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0 8px;
+}
+
+.feed-scroll-sentinel__label {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.feed-scroll-sentinel--yb {
+  grid-column: 1 / -1;
+}

@@ -1,0 +1,22 @@
+# Example reverse-proxy headers for czutkabet.com (nginx).
+# Copy to deploy/nginx/security-headers.conf and include from your server block.
+# Same-origin: SPA and /api proxy on one host — connect-src 'self' only.
+# If API is on another host, widen connect-src / img-src accordingly.
+
+add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-Frame-Options "DENY" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex" always;
+
+# Edge rate limit — second layer behind app slowapi (tune for traffic):
+limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+
+# In your server { } block, inside location /api/ { ... }:
+#   limit_req zone=api burst=40 nodelay;
+#   proxy_pass http://127.0.0.1:4000;
+#   include /path/to/deploy/nginx/security-headers.conf;
+
+# Optional admin UI IP allowlist — see deploy/nginx/admin-allowlist.conf.example

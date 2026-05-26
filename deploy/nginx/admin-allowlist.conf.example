@@ -1,0 +1,8 @@
+# Optional: restrict /admin SPA to office/VPN IPs (defense in depth — API auth still required).
+# Replace 203.0.113.0/24 with your allowlisted CIDRs.
+
+# location /admin {
+#   allow 203.0.113.0/24;
+#   deny all;
+#   try_files $uri $uri/ /index.html;
+# }

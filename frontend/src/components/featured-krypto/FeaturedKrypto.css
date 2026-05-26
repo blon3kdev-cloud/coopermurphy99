@@ -1,0 +1,523 @@
+/* ── Section / grid shell ─────────────────────────────────────────────────── */
+
+.featured-krypto {
+  width: 100%;
+  padding: 0 20px 48px;
+  display: flex;
+  justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.featured-krypto__inner {
+  width: 100%;
+  max-width: min(1200px, 100%);
+  min-width: 0;
+}
+
+.featured-krypto__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  min-width: 0;
+}
+
+.featured-krypto__heading {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.72px;
+  line-height: normal;
+  color: #fff;
+}
+
+.featured-krypto__view-all-label--short {
+  display: none;
+}
+
+.featured-krypto__view-all-label--long {
+  display: inline;
+}
+
+.featured-krypto__view-all {
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-sizing: border-box;
+  font: inherit;
+  background: #1b1b1b;
+  color: #fafafa;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.48px;
+  padding: 10px 15px;
+  border-radius: 32px;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.featured-krypto__view-all:hover {
+  background: #242424;
+}
+
+@media (max-width: 767px) {
+  .featured-krypto__header {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .featured-krypto__heading {
+    font-size: clamp(18px, 4.8vw, 21px);
+    letter-spacing: -0.54px;
+  }
+
+  .featured-krypto__view-all {
+    padding: 8px 12px;
+    font-size: 14px;
+    letter-spacing: -0.42px;
+    flex-shrink: 0;
+  }
+
+  .featured-krypto__view-all-label--short {
+    display: inline;
+  }
+
+  .featured-krypto__view-all-label--long {
+    display: none;
+  }
+}
+
+.featured-krypto__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* ── Card shell (overrides from default featured-krypto__card) ────────────── */
+
+.featured-krypto__card.bety-krypto-card {
+  background: var(--bg-elevated, #161616);
+  border-radius: 24px;
+  padding: 0;
+  gap: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+/* ── Tilt inner ───────────────────────────────────────────────────────────── */
+
+.bety-krypto-card .bety-card__tilt {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 22px 24px;
+  flex: 1 1 auto;
+  min-width: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  transform: perspective(1400px) translateZ(0);
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bety-krypto-card .bety-card__tilt {
+    transform: none !important;
+    transition: none;
+  }
+}
+
+/* ── Head ─────────────────────────────────────────────────────────────────── */
+
+.bety-krypto__head,
+.bety-krypto__actions {
+  min-width: 0;
+}
+
+.bety-krypto__head {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.bety-krypto__pfp-wrap {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.bety-krypto__pfp-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+.bety-krypto__head-text {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bety-krypto__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.3;
+  color: var(--text-primary, #fff);
+  min-width: 0;
+}
+
+.bety-krypto__head-timer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+  align-self: flex-start;
+  flex-shrink: 0;
+  margin-left: auto;
+  text-align: right;
+  min-width: 0;
+}
+
+.bety-krypto__head-timer .bety-krypto__price-label {
+  white-space: nowrap;
+}
+
+.bety-krypto__timer-value {
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  color: var(--text-primary, #fff);
+}
+
+/* ── Prices ───────────────────────────────────────────────────────────────── */
+
+.bety-krypto__prices {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px 14px;
+  width: 100%;
+  min-width: 0;
+  justify-items: start;
+  align-items: start;
+}
+
+.bety-krypto__price {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+  text-align: left;
+}
+
+.bety-krypto__price--beat {
+  padding-right: 4px;
+}
+
+.bety-krypto__price-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-secondary, #a1a1aa);
+  text-transform: uppercase;
+}
+
+.bety-krypto__price--beat .bety-krypto__price-value,
+.bety-krypto__price--current .bety-krypto__price-value {
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.bety-krypto__price--beat .bety-krypto__price-value {
+  color: #bcc3cb;
+}
+
+.bety-krypto__price--current .bety-krypto__price-value {
+  color: var(--text-primary, #fff);
+}
+
+.bety-krypto__current-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.bety-krypto__price-dir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+}
+
+.bety-krypto__price-dir-ico {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.bety-krypto__price-dir--up {
+  color: #22c55e;
+}
+
+.bety-krypto__price-dir--down {
+  color: #e04444;
+}
+
+.bety-krypto__price-dir--down .bety-krypto__price-dir-ico {
+  transform: rotate(180deg);
+  transform-origin: center;
+}
+
+.bety-krypto__price-value--tick {
+  animation: bety-krypto-price-tick 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transform-origin: left center;
+}
+
+@keyframes bety-krypto-price-tick {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bety-krypto__price-value--tick {
+    animation: none;
+  }
+}
+
+/* ── Resolutions (Minione) ────────────────────────────────────────────────── */
+
+.bety-krypto__resolutions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.bety-krypto__past {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.bety-krypto__past-label {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #e4e4e7;
+}
+
+.bety-krypto__res-vbar {
+  display: block;
+  width: 1px;
+  height: 20px;
+  flex-shrink: 0;
+  align-self: center;
+  background: #2d3238;
+  border-radius: 1px;
+}
+
+.bety-krypto__res-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  flex: 0 1 auto;
+  min-width: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bety-krypto__res {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bety-krypto__res--up {
+  background: #22c55e;
+}
+
+.bety-krypto__res--down {
+  background: #e04444;
+}
+
+.bety-krypto__res--empty {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+.bety-krypto__res-ico {
+  width: 14px;
+  height: 14px;
+  display: block;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.bety-krypto__res--down .bety-krypto__res-ico {
+  transform: rotate(180deg);
+  transform-origin: center;
+}
+
+/* ── Actions ──────────────────────────────────────────────────────────────── */
+
+.bety-krypto__actions {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  margin-top: auto;
+  font-weight: 600;
+}
+
+.bety-krypto__odds {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 52px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bety-krypto__odds-label {
+  font-size: 17px;
+  letter-spacing: -0.03em;
+}
+
+.bety-krypto__odds-mult {
+  font-size: 16.5px;
+  letter-spacing: -0.03em;
+  opacity: 0.9;
+}
+
+.bety-krypto__odds--yes {
+  background: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+}
+
+.bety-krypto__odds--no {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+}
+
+.bety-krypto__odds.bety-krypto__odds--selected {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.bety-krypto__odds.bety-krypto__odds--selected .bety-krypto__odds-mult {
+  opacity: 1;
+}
+
+.bety-krypto__odds--disabled,
+.bety-krypto__odds:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 960px) {
+  .featured-krypto__grid {
+    grid-template-columns: 1fr;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .featured-krypto__grid {
+    max-width: none;
+  }
+
+  .bety-krypto-card .bety-card__tilt {
+    padding: 16px 14px 18px;
+    gap: 14px;
+  }
+
+  .bety-krypto__title {
+    font-size: 14px;
+  }
+
+  .bety-krypto__pfp-wrap {
+    width: 44px;
+    height: 44px;
+    padding: 6px;
+    border-radius: 12px;
+  }
+
+  .bety-krypto__odds {
+    padding: 8px 10px;
+  }
+
+  .bety-krypto__odds-label {
+    font-size: 15px;
+  }
+
+  .bety-krypto__odds-mult {
+    font-size: 14px;
+  }
+}

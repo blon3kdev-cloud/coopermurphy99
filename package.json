@@ -1,0 +1,10 @@
+{
+  "name": "kwk",
+  "private": true,
+  "scripts": {
+    "deploy": "sh scripts/deploy.sh",
+    "deploy:backend": "npm run deploy --prefix backend",
+    "deploy:frontend": "npm run deploy --prefix frontend",
+    "update": "sh scripts/update.sh"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "short_name": "czutkabet.com",
+  "name": "czutkabet.com — predictions & bets",
+  "description": "Bet on the edge. Best bets, 0% commission.",
+  "icons": [
+    {
+      "src": "czutkalogo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "czutkalogo.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#FFD700",
+  "background_color": "#FFD700"
+}

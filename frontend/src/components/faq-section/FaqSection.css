@@ -1,0 +1,114 @@
+.faq {
+  width: 100%;
+  padding: 48px 20px 56px;
+  background: transparent;
+}
+
+.faq__inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.faq__item {
+  border-radius: 26px;
+  border: none;
+  background: var(--faq-row-bg, rgba(255, 255, 255, 0.045));
+  overflow: hidden;
+}
+
+.faq__summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 24px 26px;
+  padding-right: 54px;
+  font-size: 20px;
+  font-weight: 600;
+  font-variation-settings: 'wght' 600;
+  letter-spacing: -0.38px;
+  line-height: 1.42;
+  color: var(--text-primary, #fff);
+  position: relative;
+  user-select: none;
+}
+
+.faq__summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq__summary::after {
+  content: '';
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin-top: -6px;
+  border-right: 2px solid var(--text-secondary, #a1a1aa);
+  border-bottom: 2px solid var(--text-secondary, #a1a1aa);
+  transform: rotate(45deg);
+  opacity: 0.62;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.faq__item[open] .faq__summary::after {
+  transform: rotate(-135deg);
+  margin-top: -1px;
+  opacity: 0.92;
+}
+
+.faq__summary:hover::after {
+  opacity: 0.92;
+}
+
+.faq__answer {
+  margin: 0;
+  padding: 0 26px 22px;
+  font-size: 18px;
+  font-weight: 500;
+  font-variation-settings: 'wght' 500;
+  letter-spacing: -0.22px;
+  line-height: 1.56;
+  color: var(--text-secondary, #a1a1aa);
+  max-width: none;
+}
+
+@media (max-width: 560px) {
+  .faq {
+    padding: 38px 20px 44px;
+  }
+
+  .faq__list {
+    gap: 12px;
+  }
+
+  .faq__item {
+    border-radius: 22px;
+  }
+
+  .faq__summary {
+    padding: 19px 20px;
+    padding-right: 48px;
+    font-size: 18px;
+    letter-spacing: -0.32px;
+  }
+
+  .faq__summary::after {
+    right: 20px;
+  }
+
+  .faq__answer {
+    padding: 0 20px 18px;
+    font-size: 16px;
+    letter-spacing: -0.16px;
+  }
+}

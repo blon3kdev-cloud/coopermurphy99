@@ -1,0 +1,38 @@
+{
+  "players": [
+    { "names": ["Erling Haaland", "Haaland"], "team": "Manchester City", "league": "Premier League" },
+    { "names": ["Mohamed Salah", "Salah"], "team": "Liverpool", "league": "Premier League" },
+    { "names": ["Cole Palmer", "Palmer"], "team": "Chelsea", "league": "Premier League" },
+    { "names": ["Bukayo Saka", "Saka"], "team": "Arsenal", "league": "Premier League" },
+    { "names": ["Alexander Isak", "Isak"], "team": "Newcastle United", "league": "Premier League" },
+    { "names": ["Son Heung-min", "Heung-min Son", "Son"], "team": "Tottenham Hotspur", "league": "Premier League" },
+    { "names": ["Ollie Watkins", "Watkins"], "team": "Aston Villa", "league": "Premier League" },
+    { "names": ["Bruno Fernandes", "Fernandes"], "team": "Manchester United", "league": "Premier League" },
+
+    { "names": ["Kylian Mbappe", "Mbappe", "Mbappé"], "team": "Real Madrid", "league": "La Liga" },
+    { "names": ["Robert Lewandowski", "Lewandowski"], "team": "Barcelona", "league": "La Liga" },
+    { "names": ["Vinicius Junior", "Vinícius Júnior", "Vinicius"], "team": "Real Madrid", "league": "La Liga" },
+    { "names": ["Raphinha"], "team": "Barcelona", "league": "La Liga" },
+    { "names": ["Lamine Yamal", "Yamal"], "team": "Barcelona", "league": "La Liga" },
+    { "names": ["Antoine Griezmann", "Griezmann"], "team": "Atletico Madrid", "league": "La Liga" },
+    { "names": ["Jude Bellingham", "Bellingham"], "team": "Real Madrid", "league": "La Liga" },
+
+    { "names": ["Harry Kane", "Kane"], "team": "Bayern Munich", "league": "Bundesliga" },
+    { "names": ["Florian Wirtz", "Wirtz"], "team": "Bayer Leverkusen", "league": "Bundesliga" },
+    { "names": ["Serhou Guirassy", "Guirassy"], "team": "Borussia Dortmund", "league": "Bundesliga" },
+    { "names": ["Michael Olise", "Olise"], "team": "Bayern Munich", "league": "Bundesliga" },
+    { "names": ["Jamal Musiala", "Musiala"], "team": "Bayern Munich", "league": "Bundesliga" },
+
+    { "names": ["Lautaro Martinez", "Lautaro"], "team": "Inter Milan", "league": "Serie A" },
+    { "names": ["Marcus Thuram", "Thuram"], "team": "Inter Milan", "league": "Serie A" },
+    { "names": ["Rafael Leao", "Leao"], "team": "AC Milan", "league": "Serie A" },
+    { "names": ["Ademola Lookman", "Lookman"], "team": "Atalanta", "league": "Serie A" },
+    { "names": ["Dusan Vlahovic", "Vlahovic"], "team": "Juventus", "league": "Serie A" },
+    { "names": ["Victor Osimhen", "Osimhen"], "team": "Napoli", "league": "Serie A" },
+
+    { "names": ["Ousmane Dembele", "Dembele", "Dembélé"], "team": "Paris Saint-Germain", "league": "Ligue 1" },
+    { "names": ["Bradley Barcola", "Barcola"], "team": "Paris Saint-Germain", "league": "Ligue 1" },
+    { "names": ["Jonathan David", "David"], "team": "Lille", "league": "Ligue 1" },
+    { "names": ["Alexandre Lacazette", "Lacazette"], "team": "Olympique Lyon", "league": "Ligue 1" }
+  ]
+}

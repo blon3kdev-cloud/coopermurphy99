@@ -1,0 +1,63 @@
+/* Off-screen card rendered for PNG export */
+
+.share-dl {
+  width: 480px;
+  box-sizing: border-box;
+  background: #ffd600;
+  border-radius: 24px;
+  padding: 28px 24px 32px;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+.share-dl__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 0 22px;
+}
+
+.share-dl__brand-mark {
+  flex-shrink: 0;
+}
+
+.share-dl__brand-name {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  color: #000;
+  letter-spacing: -0.56px;
+  line-height: 1;
+}
+
+.share-dl__ticket .yb__ticket-cluster {
+  display: block;
+}
+
+.share-dl__ticket .yb__ticket-stack {
+  grid-column: auto;
+  width: 100%;
+}
+
+.share-dl__ticket .yb__card {
+  border-radius: 16px 16px 0 0;
+}
+
+.share-dl__ticket .yb__ticket-cluster--parlay .yb__card--stack-first {
+  border-radius: 16px 16px 0 0;
+}
+
+.share-dl__ticket .yb__card-title {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.share-dl__ticket .yb__zigzag {
+  background-color: #ffd600;
+}
+
+.share-dl__ticket img[data-share-win] {
+  display: block;
+}
