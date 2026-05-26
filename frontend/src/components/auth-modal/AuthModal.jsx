@@ -4,10 +4,10 @@ import './AuthModal.css';
 import { auth } from '../../lib/api';
 import { DiscordIcon, TelegramIcon } from './AuthProviderIcons';
 
-const DISCORD_INVITE = 'https://discord.gg/czutkagg';
-const DISCORD_INVITE_LABEL = 'discord.gg/czutkagg';
-const TELEGRAM_URL = 'https://t.me/czutkagg';
-const TELEGRAM_LABEL = 't.me/czutkagg';
+const DISCORD_INVITE = 'https://discord.gg/B4hCCcvG';
+const DISCORD_INVITE_LABEL = 'discord.gg/B4hCCcvG';
+const TELEGRAM_URL = 'https://t.me/czutkabetcom_bot';
+const TELEGRAM_LABEL = 't.me/czutkabetcom_bot';
 const OTP_LENGTH = 6;
 const IS_LOCAL_DEV = process.env.NODE_ENV === 'development';
 const EMPTY_OTP = () => Array.from({ length: OTP_LENGTH }, () => '');
@@ -299,7 +299,7 @@ function AuthModal({ mode, onClose, onSwitchMode, onLoggedIn }) {
               </>
             ) : (
               <>
-                <StepBlock loginVariant label="Step 1" title="Join our telegram" />
+                <StepBlock loginVariant label="Step 1" title="Open our Telegram bot" />
                 {joinTelegramBar}
                 <StepBlock loginVariant label="Step 2" title="Type /login (Sign up if not registered yet)" />
                 <div className="auth-modal__cmd-bar auth-modal__cmd-bar--login">
@@ -406,7 +406,7 @@ function AuthModal({ mode, onClose, onSwitchMode, onLoggedIn }) {
               </>
             ) : (
               <>
-                <StepBlock label="Step 1" title="Join our telegram" />
+                <StepBlock label="Step 1" title="Open our Telegram bot" />
                 {joinTelegramBar}
                 <StepBlock label="Step 2" title="And type /register" />
                 <div className="auth-modal__action-bar">

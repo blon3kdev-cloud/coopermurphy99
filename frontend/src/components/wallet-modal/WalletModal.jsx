@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import '../auth-modal/AuthModal.css';
 import './WalletModal.css';
-const DISCORD_INVITE = 'https://discord.gg/czutkagg';
-const DISCORD_INVITE_LABEL = 'discord.gg/czutkagg';
-const TELEGRAM_URL = 'https://t.me/czutkagg';
-const TELEGRAM_LABEL = 't.me/czutkagg';
+const DISCORD_INVITE = 'https://discord.gg/B4hCCcvG';
+const DISCORD_INVITE_LABEL = 'discord.gg/B4hCCcvG';
+const TELEGRAM_URL = 'https://t.me/czutkabetcom_bot';
+const TELEGRAM_LABEL = 't.me/czutkabetcom_bot';
 
 /** @param {{ open: boolean; onClose: () => void }} props */
 function WalletModal({ open, onClose }) {
@@ -112,7 +112,7 @@ function WalletModal({ open, onClose }) {
           <>
             <div className="auth-modal__step">
               <p className="auth-modal__step-label">Step 1</p>
-              <p className="auth-modal__step-title">Open our Telegram channel</p>
+              <p className="auth-modal__step-title">Open our Telegram bot</p>
             </div>
 
             <div className="auth-modal__action-bar">

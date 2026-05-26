@@ -7,10 +7,10 @@ import { toastChipCredit, toastError } from '../../lib/toast';
 import { safeReferralUrl } from '../../lib/safeUrl';
 import '../../pages/DarmoweNagrodyPage.css';
 
-const DISCORD_URL = 'https://discord.gg/czutkagg';
-const DISCORD_LABEL = 'discord.gg/czutkagg';
-const TELEGRAM_URL = 'https://t.me/czutkagg';
-const TELEGRAM_LABEL = 't.me/czutkagg';
+const DISCORD_URL = 'https://discord.gg/B4hCCcvG';
+const DISCORD_LABEL = 'discord.gg/B4hCCcvG';
+const TELEGRAM_URL = 'https://t.me/czutkabetcom_bot';
+const TELEGRAM_LABEL = 't.me/czutkabetcom_bot';
 
 const DEFAULT_VIP_BONUSES = {
   daily: { status: 'cooldown', countdown: '—' },

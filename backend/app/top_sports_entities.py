@@ -9,6 +9,7 @@ from typing import Optional
 _DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 _FOOTBALL_PLAYERS_FILE = "top_football_players.json"
+_FOOTBALL_NATIONALITIES_FILE = "top_football_nationalities.json"
 
 _SPORT_DATA_FILES: dict[str, str] = {
     "football": "top_football_teams.json",
@@ -161,7 +162,8 @@ _EXCLUDED_FOOTBALL_LEAGUE_HINTS: tuple[str, ...] = (
     "friendlies",
 )
 
-_TOP_FOOTBALL_LEAGUE_KEYWORDS: tuple[str, ...] = (
+# Big Five European domestic leagues (top clubs).
+_BIG_FIVE_FOOTBALL_LEAGUE_KEYWORDS: tuple[str, ...] = (
     "premier league",
     "english premier",
     "la liga",
@@ -169,10 +171,40 @@ _TOP_FOOTBALL_LEAGUE_KEYWORDS: tuple[str, ...] = (
     "bundesliga",
     "serie a",
     "ligue 1",
+    "ligue un",
+    "french ligue",
+    "france ligue",
+    "ligue1",
+)
+
+_TOP_CLUB_CUP_KEYWORDS: tuple[str, ...] = (
     "uefa champions",
     "champions league",
+    "liga mistrzow",
+    "liga mistrzów",
     "europa league",
+    "liga europy",
     "conference league",
+)
+
+_INTERNATIONAL_FOOTBALL_LEAGUE_KEYWORDS: tuple[str, ...] = (
+    "world cup",
+    "european championship",
+    "uefa euro",
+    "euro 20",
+    "nations league",
+    "international friendly",
+    "fifa",
+    "world cup qualifier",
+    "euro qualifier",
+    "european qualifier",
+    "copa america",
+    "confederations cup",
+)
+
+_TOP_FOOTBALL_LEAGUE_KEYWORDS: tuple[str, ...] = (
+    *_BIG_FIVE_FOOTBALL_LEAGUE_KEYWORDS,
+    *_TOP_CLUB_CUP_KEYWORDS,
     "eredivisie",
     "primeira liga",
     "liga portugal",
@@ -239,25 +271,113 @@ def is_reserve_or_youth_team(name: str) -> bool:
     return False
 
 
-def is_top_football_league(row: dict) -> bool:
-    """True when schedule row is from a recognised top-tier competition."""
-    blob = _norm(f"{row.get('leagueName', '')} {row.get('leagueShortName', '')}")
+def _football_league_blob(row: dict) -> str:
+    return _norm(f"{row.get('leagueName', '')} {row.get('leagueShortName', '')}")
+
+
+def _league_blob_matches(blob: str, keywords: tuple[str, ...]) -> bool:
     if not blob:
         return False
     if any(ex in blob for ex in _EXCLUDED_FOOTBALL_LEAGUE_HINTS):
         return False
-    return any(kw in blob for kw in _TOP_FOOTBALL_LEAGUE_KEYWORDS)
+    return any(kw in blob for kw in keywords)
 
 
-def is_top_football_match(home: str, away: str, row: dict) -> bool:
-    """Top league + both senior clubs on the football whitelist."""
+def is_big_five_football_league(row: dict) -> bool:
+    """Domestic top-five European leagues (EPL, La Liga, Bundesliga, Serie A, Ligue 1)."""
+    blob = _football_league_blob(row)
+    if not blob:
+        return False
+    if "austrian" in blob and "bundesliga" in blob:
+        return False
+    if "2. bundesliga" in blob or "bundesliga 2" in blob:
+        return False
+    return _league_blob_matches(blob, _BIG_FIVE_FOOTBALL_LEAGUE_KEYWORDS)
+
+
+def is_top_club_cup_league(row: dict) -> bool:
+    """UEFA club competitions (Champions League, Europa, etc.)."""
+    return _league_blob_matches(_football_league_blob(row), _TOP_CLUB_CUP_KEYWORDS)
+
+
+def is_international_football_league(row: dict) -> bool:
+    """Major national-team competitions (World Cup, Euros, Nations League, etc.)."""
+    return _league_blob_matches(_football_league_blob(row), _INTERNATIONAL_FOOTBALL_LEAGUE_KEYWORDS)
+
+
+def is_top_football_league(row: dict) -> bool:
+    """True when schedule row is from a recognised top-tier competition."""
+    blob = _football_league_blob(row)
+    return _league_blob_matches(blob, _TOP_FOOTBALL_LEAGUE_KEYWORDS)
+
+
+@lru_cache(maxsize=1)
+def _nationality_alias_set() -> frozenset[str]:
+    path = _DATA_DIR / _FOOTBALL_NATIONALITIES_FILE
+    if not path.is_file():
+        return frozenset()
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    aliases: set[str] = set()
+    for entry in raw.get("nationalities", []):
+        for name in entry.get("names", []):
+            n = _norm(name)
+            if n:
+                aliases.add(n)
+    return frozenset(aliases)
+
+
+def is_top_football_nationality(name: str) -> bool:
+    """True when side is on the curated top-national-teams list."""
+    entity = _norm(name)
+    if not entity:
+        return False
+    aliases = _nationality_alias_set()
+    if not aliases:
+        return False
+    if entity in aliases:
+        return True
+    for alias in aliases:
+        if len(alias) < 4 or len(entity) < 4:
+            continue
+        if alias in entity or entity in alias:
+            return True
+    return False
+
+
+def _football_league_allowed(row: dict) -> bool:
+    """Big-five, UEFA cups, or major international competitions."""
+    return (
+        is_big_five_football_league(row)
+        or is_top_club_cup_league(row)
+        or is_international_football_league(row)
+    )
+
+
+def is_top_football_nationality_match(home: str, away: str, row: dict) -> bool:
+    """International fixture in an allowed competition (league gate only)."""
     if is_womens_team(home) or is_womens_team(away):
         return False
     if is_reserve_or_youth_team(home) or is_reserve_or_youth_team(away):
         return False
-    if not is_top_football_league(row):
+    return is_international_football_league(row)
+
+
+def is_top_football_club_match(home: str, away: str, row: dict) -> bool:
+    """Big-five domestic league or UEFA cup (league gate only)."""
+    if is_womens_team(home) or is_womens_team(away):
         return False
-    return is_top_entity(home, "football") and is_top_entity(away, "football")
+    if is_reserve_or_youth_team(home) or is_reserve_or_youth_team(away):
+        return False
+    return is_big_five_football_league(row) or is_top_club_cup_league(row)
+
+
+def is_top_football_match(home: str, away: str, row: dict) -> bool:
+    """Allowed football league; excludes women's and youth (U) sides."""
+    if is_womens_team(home) or is_womens_team(away):
+        return False
+    if is_reserve_or_youth_team(home) or is_reserve_or_youth_team(away):
+        return False
+    return _football_league_allowed(row)
 
 
 def is_nba_match(row: dict) -> bool:

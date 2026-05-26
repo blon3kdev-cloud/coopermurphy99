@@ -610,7 +610,7 @@ function AutoAddBetsModal({ open, onClose, onCreated }) {
         />
       </Field>
       <p className="ad-field-hint" style={{ margin: 0 }}>
-        Football: top leagues, both teams on the whitelist (women&apos;s teams skipped). Basketball: NBA only, winner market (no extra bet types).
+        Football: big-five, UEFA cups, or major internationals — any teams in those leagues (women&apos;s and U teams skipped). Basketball: NBA only, winner market.
       </p>
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         <button

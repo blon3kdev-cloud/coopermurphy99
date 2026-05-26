@@ -370,10 +370,15 @@ async def attach_referrer(user: dict, ref_username: str) -> dict:
     return {"ok": True}
 
 
-async def redeem_code(user: dict, code: str) -> dict:
+async def redeem_code(
+    user: dict,
+    code: str,
+    *,
+    client_key: str | None = None,
+) -> dict:
     from .redeem_codes_service import redeem_code as _redeem
 
-    return await _redeem(user, code)
+    return await _redeem(user, code, client_key=client_key)
 
 
 def _touch_period_bucket(stats: dict, kind: str, stake: Decimal, payout: Decimal) -> None:
