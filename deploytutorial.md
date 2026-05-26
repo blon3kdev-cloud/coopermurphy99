@@ -329,6 +329,12 @@ Create `/etc/nginx/sites-available/kwk`:
 ```nginx
 limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
 
+# Required for Crash WebSocket (/api/games/crash/ws)
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
 server {
     listen 80;
     server_name yourdomain.com www.yourdomain.com;
@@ -364,6 +370,12 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+
+        # WebSocket (Crash) + long-lived connections
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
 
         proxy_buffering off;
         proxy_cache off;
@@ -482,6 +494,7 @@ Then restart systemd/nginx as above — do not leave `npm run deploy` running in
 | Wrong client IP in rate limits | `TRUSTED_PROXY=true` behind nginx |
 | SPA routes 404 | `try_files ... /index.html` in nginx `location /` |
 | SSE / live chart stuck | nginx `proxy_buffering off` on `/api/` (see step 7) |
+| Crash WS `CONNECTION_REFUSED` | Add WebSocket headers in step 7 (`Upgrade`, `Connection` map); reload nginx; ensure backend is running (`curl -i -N -H "Connection: Upgrade" -H "Upgrade: websocket" -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" http://127.0.0.1:4000/api/games/crash/ws`) |
 | Bots not running | Tokens in `.env`; use `ExecStart=.../scripts/start.sh` in systemd |
 | Payments | `PAYMENT_WALLET_MNEMONIC` and related vars; production validates mnemonic length |
 

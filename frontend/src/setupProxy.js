@@ -7,6 +7,7 @@ module.exports = function setupProxy(app) {
     createProxyMiddleware({
       target: 'http://localhost:4000',
       changeOrigin: true,
+      ws: true,
       onProxyRes(proxyRes, req) {
         if (req.url?.includes('/bitcoin/stream')) {
           proxyRes.headers['cache-control'] = 'no-cache, no-transform'

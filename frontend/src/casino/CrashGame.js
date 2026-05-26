@@ -72,6 +72,7 @@ export function mountCrashGame({ gameHost, shell }) {
   let history = []
   let ws = null
   let wsReconnectTimer = 0
+  let pollTimer = 0
   let destroyed = false
   let rafId = 0
   const activeSounds = new Set()
@@ -365,11 +366,24 @@ export function mountCrashGame({ gameHost, shell }) {
     syncButtons()
   }
 
+  function startPollFallback() {
+    if (pollTimer || destroyed) return
+    pollTimer = window.setInterval(() => {
+      if (!destroyed) refreshState()
+    }, 1000)
+  }
+
+  function stopPollFallback() {
+    window.clearInterval(pollTimer)
+    pollTimer = 0
+  }
+
   function connectWs() {
     window.clearTimeout(wsReconnectTimer)
     wsReconnectTimer = 0
     ws = new WebSocket(wsUrl('/games/crash/ws'))
     ws.onopen = () => {
+      stopPollFallback()
       refreshState()
     }
     ws.onmessage = (ev) => {
@@ -380,8 +394,12 @@ export function mountCrashGame({ gameHost, shell }) {
     }
     ws.onclose = () => {
       if (!destroyed) {
+        startPollFallback()
         wsReconnectTimer = window.setTimeout(connectWs, 1500)
       }
+    }
+    ws.onerror = () => {
+      ws.close()
     }
   }
 
@@ -514,6 +532,7 @@ export function mountCrashGame({ gameHost, shell }) {
       destroyed = true
       window.clearTimeout(wsReconnectTimer)
       wsReconnectTimer = 0
+      stopPollFallback()
       stopAllSounds()
       cancelAnimationFrame(rafId)
       resizeObs?.disconnect()

@@ -23,12 +23,13 @@ class CrashBetBody(BaseModel):
 
 
 @router.get("/state")
-async def crash_state(user: dict = Depends(get_current_user)) -> dict:
+async def crash_state(user_id: int | None = Depends(get_optional_user_id)) -> dict:
     engine = get_crash_engine()
-    snap = engine.public_snapshot(user["id"])
-    db = get_db()
-    doc = await db.users.find_one({"id": user["id"]})
-    snap["balance"] = float(doc["balance_pln"]) if doc else 0.0
+    snap = engine.public_snapshot(user_id)
+    if user_id is not None:
+        db = get_db()
+        doc = await db.users.find_one({"id": user_id})
+        snap["balance"] = float(doc["balance_pln"]) if doc else 0.0
     return {"ok": True, **snap}
 
 
