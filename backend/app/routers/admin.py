@@ -6,7 +6,7 @@ from datetime import timedelta
 from decimal import Decimal
 from typing import Literal, Optional
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, model_validator
 
@@ -46,7 +46,7 @@ from ..security import (
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 
-class AdminLogin(BaseModel):
+class AdminLoginBody(BaseModel):
     login: str = Field(min_length=1, max_length=64)
     pin: str = Field(min_length=1, max_length=16)
     password: str = Field(min_length=1, max_length=256)
@@ -66,8 +66,8 @@ def _verify_admin_credentials(login: str, pin: str, password: str) -> bool:
 
 
 @router.post("/login")
-@limiter.limit("15/minute")
-async def admin_login(request: Request, payload: AdminLogin = Body()) -> dict:
+async def post_admin_login(request: Request, payload: AdminLoginBody) -> dict:
+    await rate_limit_request(request, "admin.login", 15)
     ok = _verify_admin_credentials(payload.login, payload.pin, payload.password)
     if not ok:
         return {"ok": False, "error": "invalid"}

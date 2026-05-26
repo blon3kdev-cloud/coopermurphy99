@@ -23,7 +23,6 @@ from urllib.parse import quote
 from zoneinfo import ZoneInfo
 
 import httpx
-import websockets
 
 from .config import get_settings
 from .crypto_fair_odds import calc_fair_crypto_odds, fair_odds_service
@@ -69,7 +68,7 @@ def window_end_ms(key: str, start_ms: int) -> int:
 
 
 def _next_poll_delay_sec(now_ms: int | None = None) -> float:
-    """Binance poll interval; last poll in each 5m window lands before round end."""
+    """REST poll interval; last poll in each 5m window lands before round end."""
     now_ms = now_ms if now_ms is not None else int(time.time() * 1000)
     start = window_start_ms("5m", now_ms)
     end = window_end_ms("5m", start)
@@ -388,7 +387,7 @@ async def _binance_poll_loop() -> None:
             await asyncio.sleep(_next_poll_delay_sec())
 
 
-# ── Chainlink Data Streams v3 (primary) ──────────────────────────────────────
+# ── Chainlink Data Streams REST (primary) ────────────────────────────────────
 
 def _chainlink_headers(full_path: str) -> dict[str, str]:
     s = get_settings()
@@ -422,33 +421,31 @@ def _decode_v3_benchmark_price(full_report_hex: str) -> float | None:
     return p / 1e18
 
 
-async def _chainlink_ws_loop() -> None:
+def _chainlink_latest_path() -> str:
+    feed_id = quote(get_settings().chainlink_feed_id, safe="")
+    return f"/api/v1/reports/latest?feedID={feed_id}"
+
+
+async def _chainlink_rest_poll_loop() -> None:
     s = get_settings()
-    feed_path = f"/api/v1/ws?feedIDs={quote(s.chainlink_feed_id, safe='')}"
-    url = f"{s.chainlink_ws_url}{feed_path}"
+    base = s.chainlink_api_url.rstrip("/")
     while True:
         try:
-            async with websockets.connect(
-                url,
-                additional_headers=_chainlink_headers(feed_path),
-                ping_interval=5,
-                ping_timeout=10,
-                max_size=None,
-            ) as ws:
-                async for raw in ws:
-                    try:
-                        msg = json.loads(raw)
-                        full = msg.get("report", {}).get("fullReport")
-                        if not full:
-                            continue
-                        price = _decode_v3_benchmark_price(full)
-                        if price and price > 0:
-                            await _publish_price(price)
-                    except Exception as exc:
-                        log.warning("chainlink parse: %s", exc)
+            path = _chainlink_latest_path()
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                r = await client.get(
+                    f"{base}{path}",
+                    headers=_chainlink_headers(path),
+                )
+                r.raise_for_status()
+                full = r.json().get("report", {}).get("fullReport")
+                if full:
+                    price = _decode_v3_benchmark_price(full)
+                    if price and price > 0:
+                        await _publish_price(price)
         except Exception as exc:
-            log.warning("chainlink ws: %s", exc)
-        await asyncio.sleep(5)
+            log.warning("chainlink rest poll error: %s", exc)
+        await asyncio.sleep(_next_poll_delay_sec())
 
 
 # ── boot ────────────────────────────────────────────────────────────────────
@@ -472,7 +469,7 @@ async def start() -> None:
     if _task is not None:
         return
     await _load_windows_from_db()
-    feed = _chainlink_ws_loop if get_settings().use_chainlink else _binance_poll_loop
+    feed = _chainlink_rest_poll_loop if get_settings().use_chainlink else _binance_poll_loop
     _task = asyncio.create_task(feed(), name="btc-price-feed")
     _clock_task = asyncio.create_task(_clock_sync_loop(), name="btc-window-clock")
 

@@ -38,8 +38,9 @@ class Settings(BaseSettings):
         default="0x00030ab7d02fbba9c6304f98824524407b1f494741174320cfd17a2c22eec1de",
         alias="CHAINLINK_FEED_ID",
     )
-    chainlink_ws_url: str = Field(
-        default="wss://ws.testnet-dataengine.chain.link", alias="CHAINLINK_WS_URL"
+    chainlink_api_url: str = Field(
+        default="https://api.testnet-dataengine.chain.link",
+        alias="CHAINLINK_API_URL",
     )
 
     odds_api_key: str = Field(default="", alias="ODDS_API_KEY")
