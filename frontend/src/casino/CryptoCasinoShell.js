@@ -17,10 +17,28 @@ const SHELL_GAME_TITLES = {
   crash: 'Crash',
   blackjack: 'Blackjack',
   blitz: 'Blitz',
+  dice2: 'Dice2',
 }
 
 const DEMO_MAX_BET = 1_000_000
 const MIN_BET = 0.01
+const INSUFFICIENT_BALANCE_MSG = 'Insufficient balance to place this bet.'
+
+function stakeCents(pln) {
+  const v = Number(pln)
+  if (!Number.isFinite(v)) return 0
+  return Math.round(v * 100)
+}
+
+function isInsufficientBalanceMessage(msg) {
+  if (typeof msg !== 'string') return false
+  const n = msg.trim().toLowerCase().replace(/\s+/g, '_')
+  return (
+    n === 'insufficient_balance'
+    || n === 'insufficient balance'
+    || n === 'insufficient_balance_to_place_this_bet.'
+  )
+}
 
 function fmtPlnAmount(n) {
   const v = Number(n)
@@ -111,6 +129,19 @@ function sidebarFieldsHtml(variant) {
       </div>
     </div>`
   }
+  if (variant === 'dice2') {
+    return `
+    <div class="crypto-casino__field casino-stat-field">
+      <label class="casino-stat-field__label" for="dice2-difficulty">Difficulty</label>
+      <div class="casino-stat-field__box casino-stat-field__box--select">
+        <select id="dice2-difficulty" class="casino-stat-field__select" data-dice2-difficulty aria-label="Difficulty">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+    </div>`
+  }
   if (variant === 'blackjack') {
     return `
     <div class="crypto-casino__bj-actions" data-bj-actions hidden>
@@ -159,12 +190,12 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
 <div class="crypto-casino__upper">
 <div class="crypto-casino__body">
   <aside class="crypto-casino__sidebar" aria-label="Bet">
-    <div class="crypto-casino__field">
-      <div class="crypto-casino__row-label">
+    <div class="crypto-casino__field" data-crypto-bet-field>
+      <div class="crypto-casino__row-label" data-crypto-bet-label>
         <span>Bet amount</span>
       </div>
       <div class="crypto-casino__bet-row">
-        <div class="crypto-casino__input-wrap crypto-casino__input-wrap--bet">
+        <div class="crypto-casino__input-wrap crypto-casino__input-wrap--bet" data-crypto-bet-wrap>
           <input type="text" class="crypto-casino__input" data-crypto-bet value="10.00" inputmode="decimal" autocomplete="off" aria-label="Bet amount" />
           <span class="crypto-casino__input-suffix crypto-casino__input-suffix--icon" aria-hidden="true"><span data-currency-icon></span></span>
         </div>
@@ -174,11 +205,13 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
           <button type="button" class="crypto-casino__chip" data-crypto-max>Max</button>
         </div>
       </div>
+      <p class="crypto-casino__bet-err" data-crypto-bet-err hidden role="alert"></p>
     </div>
     ${sidebarFieldsHtml(shellVariant)}
     <div class="crypto-casino__actions">
       <p class="crypto-casino__err" data-crypto-err hidden></p>
-      <button type="button" class="crypto-casino__btn crypto-casino__btn--primary" data-crypto-postaw>${shellVariant === 'blackjack' || shellVariant === 'blitz' ? 'Bet' : 'Place bet'}</button>
+      <button type="button" class="crypto-casino__btn crypto-casino__btn--primary" data-crypto-postaw>${shellVariant === 'blackjack' || shellVariant === 'blitz' || shellVariant === 'dice2' ? 'Bet' : 'Place bet'}</button>
+      ${shellVariant === 'dice2' ? '<button type="button" class="crypto-casino__btn crypto-casino__btn--secondary" data-dice2-roll disabled>Roll</button>' : ''}
       <button type="button" class="crypto-casino__btn crypto-casino__btn--cashout" data-crypto-wyplac hidden>Cash out</button>
     </div>
   </aside>
@@ -212,16 +245,57 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
   }
 
   const betInput = el.querySelector('[data-crypto-bet]')
+  const betField = el.querySelector('[data-crypto-bet-field]')
+  const betErrLine = el.querySelector('[data-crypto-bet-err]')
   const btnPostaw = el.querySelector('[data-crypto-postaw]')
   const errLine = el.querySelector('[data-crypto-err]')
+  const dice2DifficultyEl = el.querySelector('[data-dice2-difficulty]')
+
+  function betExceedsBalance(bet) {
+    return stakeCents(bet) > stakeCents(walletSnap.balancePln)
+  }
+
+  function maybeClearBetBalanceError() {
+    if (betErrLine && !betErrLine.hidden && !betExceedsBalance(parseBet())) {
+      clearBetBalanceError()
+    }
+  }
+
+  function clearBetBalanceError() {
+    betField?.classList.remove('crypto-casino__field--bet-error')
+    if (!betErrLine) return
+    betErrLine.textContent = ''
+    betErrLine.hidden = true
+  }
+
+  function showBetBalanceError(msg = INSUFFICIENT_BALANCE_MSG) {
+    if (errLine) {
+      errLine.textContent = ''
+      errLine.hidden = true
+    }
+    betField?.classList.add('crypto-casino__field--bet-error')
+    if (!betErrLine) return
+    betErrLine.textContent = msg
+    betErrLine.hidden = false
+  }
 
   function clearGameError() {
+    clearBetBalanceError()
     if (!errLine) return
     errLine.textContent = ''
     errLine.hidden = true
   }
 
   function showGameError(msg) {
+    if (isInsufficientBalanceMessage(msg)) {
+      showBetBalanceError(
+        typeof msg === 'string' && msg !== 'insufficient_balance' && msg !== 'insufficient balance'
+          ? msg
+          : INSUFFICIENT_BALANCE_MSG,
+      )
+      return
+    }
+    clearBetBalanceError()
     if (!errLine) return
     errLine.textContent = msg
     errLine.hidden = false
@@ -295,7 +369,8 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
       resultAmt.textContent = 'Tie'
     } else {
       resultMult.textContent = won ? fmtMult(mult, shellVariant === 'keno') : 'Loss'
-      resultAmt.textContent = won ? `+${fmtPlnAmount(payoutDelta)}` : `−${fmtPlnAmount(betParsed)}`
+      const lossAmt = opts.lossAmount != null ? opts.lossAmount : betParsed
+      resultAmt.textContent = won ? `+${fmtPlnAmount(payoutDelta)}` : `−${fmtPlnAmount(lossAmt)}`
     }
     resultRoot.hidden = false
     void resultRoot.offsetHeight
@@ -336,6 +411,7 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
       const v = Math.max(MIN_BET, Math.round(parseBet() * 0.5 * 100) / 100)
       betInput.value = fmtBetFieldPln(v)
       syncBetParsedFromInput()
+      maybeClearBetBalanceError()
       notifyBetChange()
       return
     }
@@ -345,6 +421,7 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
       const v = Math.min(Math.round(parseBet() * 2 * 100) / 100, DEMO_MAX_BET)
       betInput.value = fmtBetFieldPln(v)
       syncBetParsedFromInput()
+      maybeClearBetBalanceError()
       notifyBetChange()
       return
     }
@@ -354,18 +431,24 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
       const raw = Math.min(walletSnap.balancePln, DEMO_MAX_BET)
       betInput.value = fmtBetFieldPln(Math.max(MIN_BET, raw))
       syncBetParsedFromInput()
+      maybeClearBetBalanceError()
       notifyBetChange()
       return
     }
     if (t.closest('[data-crypto-postaw]')) {
       haptic('medium')
-      clearGameError()
       if (t.closest('[data-crypto-postaw]:disabled')) return
-      if ((shellVariant === 'keno' || shellVariant === 'limbo' || shellVariant === 'dice' || shellVariant === 'crash' || shellVariant === 'blackjack' || shellVariant === 'blitz') && onPlay) {
+      if ((shellVariant === 'keno' || shellVariant === 'limbo' || shellVariant === 'dice' || shellVariant === 'crash' || shellVariant === 'blackjack' || shellVariant === 'blitz' || shellVariant === 'dice2') && onPlay) {
         if (openLoginIfGuest()) return
         if (roundActive) return
         betParsed = parseBet()
         if (betParsed < MIN_BET) { haptic('warning'); return }
+        if (betExceedsBalance(betParsed)) {
+          haptic('warning')
+          showBetBalanceError()
+          return
+        }
+        clearBetBalanceError()
         if (shellVariant === 'blitz') dismissResultModal()
         onPlay()
         syncBetParsedFromInput()
@@ -383,10 +466,14 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
     betInput.addEventListener('input', () => {
       sanitizeBetInputWhileTyping()
       syncBetParsedFromInput()
+      maybeClearBetBalanceError()
       notifyBetChange()
     })
     betInput.addEventListener('focus', () => syncBetParsedFromInput())
-    betInput.addEventListener('blur', () => commitBetFieldFromBlur())
+    betInput.addEventListener('blur', () => {
+      commitBetFieldFromBlur()
+      maybeClearBetBalanceError()
+    })
   }
 
   function updateCurrencyIcons(currencyId) {
@@ -400,6 +487,7 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
     walletSnap = { id: state.id, balancePln: state.balanceRaw }
     updateCurrencyIcons(state.id)
     syncBetParsedFromInput()
+    maybeClearBetBalanceError()
   })
 
   return {
@@ -410,6 +498,14 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
       onBetChangeCb = typeof cb === 'function' ? cb : null
     },
     getKenoDifficulty: () => 'medium',
+    getDice2Difficulty() {
+      const raw = dice2DifficultyEl?.value ?? 'medium'
+      if (raw === 'easy' || raw === 'hard') return raw
+      return 'medium'
+    },
+    setDice2DifficultyDisabled(disabled) {
+      if (dice2DifficultyEl) dice2DifficultyEl.disabled = Boolean(disabled)
+    },
     showResultModal: showResult,
     dismissResultModal,
     updateProfit(profit) {
@@ -435,5 +531,7 @@ ${onClose ? `<div class="crypto-casino__topbar category-page-header--spacious-ba
     },
     clearGameError,
     showGameError,
+    clearBetBalanceError,
+    showBetBalanceError,
   }
 }

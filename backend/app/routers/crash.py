@@ -4,13 +4,13 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from ..api_errors import http_400_from_value_error
 from ..crash_engine import get_crash_engine
 from ..db import get_db
-from ..rate_limit import rate_limit_request
+from ..rate_limit import limiter, rate_limit_request
 from ..routers.games import _lock_stake
 from ..security import get_current_user, get_optional_user_id
 
@@ -23,7 +23,8 @@ class CrashBetBody(BaseModel):
 
 
 @router.get("/state")
-async def crash_state(user_id: int | None = Depends(get_optional_user_id)) -> dict:
+@limiter.exempt
+async def crash_state(user_id: Optional[int] = Depends(get_optional_user_id)) -> dict:
     engine = get_crash_engine()
     snap = engine.public_snapshot(user_id)
     if user_id is not None:
@@ -88,10 +89,3 @@ async def crash_cancel(
     except ValueError as exc:
         raise http_400_from_value_error(exc) from exc
     return {"ok": True, **snap}
-
-
-@router.websocket("/ws")
-async def crash_ws(websocket: WebSocket) -> None:
-    user_id = await get_optional_user_id(websocket)
-    client_ip = websocket.client.host if websocket.client else "unknown"
-    await get_crash_engine().connect(websocket, user_id, client_ip=client_ip)

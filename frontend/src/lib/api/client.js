@@ -19,6 +19,8 @@ export class ApiError extends Error {
       csrf_required: 'Session expired. Refresh the page and try again.',
       redeem_locked: 'Too many invalid codes. Try again in about 30 minutes.',
       validation_failed: 'Invalid request format. Refresh the page and try again.',
+      insufficient_balance: 'Insufficient balance to place this bet.',
+      'insufficient balance': 'Insufficient balance to place this bet.',
       'invalid code': 'Invalid login code.',
       'dev user missing — restart backend': 'Dev user missing — restart the backend.',
     }

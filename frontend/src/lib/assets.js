@@ -10,4 +10,5 @@ export { default as crashUrl } from '../assets/games/crash.png';
 export { default as blackjack21Url } from '../assets/games/21.png';
 export { default as autaUrl } from '../assets/games/auta.png';
 export { default as blitzUrl } from '../assets/games/blitz.png';
+export { default as dice2Url } from '../assets/games/dice2.png';
 export { default as hiloUrl } from '../assets/games/hilo.png';

@@ -14,6 +14,7 @@ import {
   blackjack21Url,
   autaUrl,
   blitzUrl,
+  dice2Url,
   hiloUrl,
 } from '../lib/assets';
 import {
@@ -32,13 +33,14 @@ const LOBBY_THUMBS = {
   blackjack21: blackjack21Url,
   auta: autaUrl,
   blitz: blitzUrl,
+  dice2: dice2Url,
   hilo: hiloUrl,
 };
 
 const ORIGINALS = KASYNO_AVAILABLE.map((g) => ({
   slug: g.slug,
   title: g.title,
-  thumb: LOBBY_THUMBS[g.slug],
+  thumb: LOBBY_THUMBS[g.slug] ?? null,
 }));
 
 const COMING_SOON = KASYNO_COMING_SOON.map((g) => ({
@@ -62,8 +64,10 @@ function ComingSoonThumbOverlay() {
 function KasynoLobbyThumb({ game, disabled, onPick }) {
   const tilt = useCursorTilt();
   const label = disabled ? `${game.title} — coming soon` : game.title;
-  const commonImg = (
+  const commonImg = game.thumb ? (
     <img className="kasyno-thumb-img" src={game.thumb} alt="" decoding="async" />
+  ) : (
+    <span className="kasyno-thumb-placeholder" aria-hidden="true">{game.title}</span>
   );
 
   if (disabled) {

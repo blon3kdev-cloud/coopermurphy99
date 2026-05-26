@@ -7,6 +7,7 @@ export async function fetchCrashState() {
     roundId: data.roundId,
     multiplier: data.multiplier,
     countdown: data.countdown,
+    waitingEndsAt: data.waitingEndsAt,
     elapsed: data.elapsed,
     history: data.history ?? [],
     myBet: data.myBet ?? null,
@@ -29,6 +30,7 @@ export async function crashBet(payload) {
     roundId: data.roundId,
     multiplier: data.multiplier,
     countdown: data.countdown,
+    waitingEndsAt: data.waitingEndsAt,
     elapsed: data.elapsed,
     history: data.history ?? [],
     myBet: data.myBet ?? null,
@@ -44,6 +46,7 @@ export async function crashCashout() {
     roundId: data.roundId,
     multiplier: data.multiplier,
     countdown: data.countdown,
+    waitingEndsAt: data.waitingEndsAt,
     elapsed: data.elapsed,
     history: data.history ?? [],
     myBet: data.myBet ?? null,
@@ -61,11 +64,69 @@ export async function crashCancelBet() {
     roundId: data.roundId,
     multiplier: data.multiplier,
     countdown: data.countdown,
+    waitingEndsAt: data.waitingEndsAt,
     elapsed: data.elapsed,
     history: data.history ?? [],
     myBet: data.myBet ?? null,
     queuedBet: data.queuedBet ?? null,
     balance: data.balance,
+  }
+}
+
+function mapDice2Session(data) {
+  const out = {
+    resumed: Boolean(data.resumed),
+    sessionId: data.sessionId ?? null,
+    difficulty: data.difficulty ?? 'medium',
+    tiles: data.tiles ?? [],
+    pathPos: data.pathPos ?? 0,
+    combinedMult: data.combinedMult ?? 1,
+    hasRolled: Boolean(data.hasRolled),
+    projectedPayout: data.projectedPayout ?? null,
+  }
+  if (data.balance != null) {
+    out.balances = { PLN: data.balance }
+  }
+  return out
+}
+
+/** @param {{ betAmount: number; difficulty?: 'easy' | 'medium' | 'hard' }} payload */
+export async function startDice2(payload) {
+  const data = await apiCall('/games/dice2/start', {
+    method: 'POST',
+    body: JSON.stringify({
+      stakePln: payload.betAmount,
+      difficulty: payload.difficulty ?? 'medium',
+    }),
+  })
+  return mapDice2Session(data)
+}
+
+export async function rollDice2() {
+  const data = await apiCall('/games/dice2/roll', { method: 'POST', body: '{}' })
+  const out = {
+    dieA: data.dieA,
+    dieB: data.dieB,
+    pathPos: data.pathPos,
+    combinedMult: data.combinedMult,
+    busted: Boolean(data.busted),
+    tileMult: data.tileMult ?? null,
+    hasRolled: Boolean(data.hasRolled),
+    payout: data.payout ?? null,
+    projectedPayout: data.projectedPayout ?? null,
+  }
+  if (data.balance != null) {
+    out.balances = { PLN: data.balance }
+  }
+  return out
+}
+
+export async function cashoutDice2() {
+  const data = await apiCall('/games/dice2/cashout', { method: 'POST', body: '{}' })
+  return {
+    combinedMult: data.combinedMult,
+    payout: data.payout,
+    balances: { PLN: data.balance },
   }
 }
 

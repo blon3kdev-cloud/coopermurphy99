@@ -7,7 +7,7 @@ import { createCryptoCasinoShell } from '../../casino/CryptoCasinoShell';
  * Mounts a vanilla-JS casino game (keno / limbo / dice) into a React container.
  * Game modules are code-split — only the active game is downloaded.
  *
- * @param {{ gameType: 'keno' | 'limbo' | 'dice' | 'crash' | 'blackjack' | 'blitz', onBack: () => void }} props
+ * @param {{ gameType: 'keno' | 'limbo' | 'dice' | 'dice2' | 'crash' | 'blackjack' | 'blitz', onBack: () => void }} props
  */
 function CasinoGame({ gameType, onBack }) {
   const containerRef = useRef(null);
@@ -135,6 +135,25 @@ function CasinoGame({ gameType, onBack }) {
             getBetAmount: shell.getBetAmount,
             onBetChange: shell.onBetChange,
             updateProfit: shell.updateProfit,
+            showResultModal: shell.showResultModal,
+            dismissResultModal: shell.dismissResultModal,
+            setLoading: shell.setLoading,
+            showGameError: shell.showGameError,
+            clearGameError: shell.clearGameError,
+          },
+        });
+        gameApi = api;
+        playRound = api.playRound;
+      } else if (gameType === 'dice2') {
+        const { mountDice2Game } = await import('../../casino/Dice2Game');
+        if (destroyed) return;
+        const api = mountDice2Game({
+          gameHost: shell.gameHost,
+          shell: {
+            el: shell.el,
+            getBetAmount: shell.getBetAmount,
+            getDice2Difficulty: shell.getDice2Difficulty,
+            setDice2DifficultyDisabled: shell.setDice2DifficultyDisabled,
             showResultModal: shell.showResultModal,
             dismissResultModal: shell.dismissResultModal,
             setLoading: shell.setLoading,

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCursorTilt } from '../../hooks/useCursorTilt';
 import EmptyState from '../empty-state/EmptyState';
 import { filterCasinoGames } from '../../lib/marketFilters';
-import { KASYNO_AVAILABLE } from '../../lib/kasynoGames';
+import { buildFeaturedKasynoGames } from '../../lib/kasynoGames';
 import './FeaturedKasyno.css';
 import {
   kenoUrl as IMG_KENO,
@@ -12,6 +12,7 @@ import {
   crashUrl as IMG_CRASH,
   blackjack21Url,
   blitzUrl,
+  dice2Url,
 } from '../../lib/assets';
 
 const FEATURED_IMAGES = {
@@ -21,6 +22,7 @@ const FEATURED_IMAGES = {
   crash: IMG_CRASH,
   blackjack21: blackjack21Url,
   blitz: blitzUrl,
+  dice2: dice2Url,
 };
 
 function KasynoFeaturedCard({ title, image, to }) {
@@ -28,16 +30,21 @@ function KasynoFeaturedCard({ title, image, to }) {
   return (
     <Link className="featured-kasyno__card" to={to} aria-label={title}>
       <span className="featured-kasyno__card-tilt" {...tilt}>
-        <img alt={title} className="featured-kasyno__img" src={image} />
+        {image ? (
+          <img alt={title} className="featured-kasyno__img" src={image} />
+        ) : (
+          <span className="featured-kasyno__placeholder">{title}</span>
+        )}
       </span>
     </Link>
   );
 }
 
 function FeaturedKasyno({ query = '' }) {
+  const featured = useMemo(() => buildFeaturedKasynoGames(), []);
   const visible = useMemo(
-    () => filterCasinoGames(KASYNO_AVAILABLE, query),
-    [query],
+    () => filterCasinoGames(featured, query),
+    [featured, query],
   );
   const hasSearch = Boolean(String(query || '').trim());
 
@@ -73,7 +80,7 @@ function FeaturedKasyno({ query = '' }) {
               <li key={g.slug} className="featured-kasyno__item">
                 <KasynoFeaturedCard
                   title={g.featuredTitle}
-                  image={FEATURED_IMAGES[g.slug]}
+                  image={FEATURED_IMAGES[g.slug] ?? null}
                   to={`/casino/${g.slug}`}
                 />
               </li>

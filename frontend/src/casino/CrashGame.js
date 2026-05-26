@@ -1,7 +1,6 @@
 import { haptic } from '../lib/haptics.js'
 import { sanitizeHtml } from '../lib/sanitizeHtml.js'
 import { crashBet, crashCashout, crashCancelBet, fetchCrashState } from '../lib/api/casino.js'
-import { wsUrl } from '../lib/api/config.js'
 import { refreshBalance, getWalletCurrencyId } from '../lib/walletCurrency.js'
 import { ApiError } from '../lib/api/client.js'
 import { openLoginIfGuest } from '../lib/betsApi.js'
@@ -18,6 +17,8 @@ const WIN_THRESHOLD = 2.0
 const CASHOUT_UNSET = 'Not set'
 /** Must match backend `crash_engine.GROWTH_RATE` */
 const GROWTH_RATE = 0.0693
+/** Must match backend `crash_engine.WAITING_SEC` */
+const WAITING_SEC = 5
 
 function fmtMult(n) {
   return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '×'
@@ -70,13 +71,14 @@ export function mountCrashGame({ gameHost, shell }) {
   let myBet = null
   let queuedBet = null
   let history = []
-  let ws = null
-  let wsReconnectTimer = 0
   let pollTimer = 0
   let destroyed = false
   let rafId = 0
   const activeSounds = new Set()
   let runStartMs = 0
+  /** Wall-clock ms when the waiting phase ends (from server). */
+  let waitingEndsAtWallMs = 0
+  let optimisticRunning = false
   let frozenElapsedSec = 0
   let frozenHeadMult = 1
   /** True after manual cashout modal — skip duplicate win UI when the round crashes. */
@@ -181,6 +183,46 @@ export function mountCrashGame({ gameHost, shell }) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
   }
 
+  function syncWaitingClock(snap) {
+    const wall = Number(snap?.waitingEndsAt)
+    if (Number.isFinite(wall) && wall > Date.now() - 1000) {
+      if (!waitingEndsAtWallMs || Math.abs(wall - waitingEndsAtWallMs) > 80) {
+        waitingEndsAtWallMs = wall
+      }
+      return
+    }
+    const sec = Number(snap?.countdown ?? snap)
+    if (!Number.isFinite(sec) || sec <= 0) {
+      waitingEndsAtWallMs = 0
+      return
+    }
+    const target = Date.now() + sec * 1000
+    if (!waitingEndsAtWallMs || Math.abs(target - waitingEndsAtWallMs) > 120) {
+      waitingEndsAtWallMs = target
+    }
+  }
+
+  function localCountdownSec() {
+    if (!waitingEndsAtWallMs) return 0
+    return Math.max(0, (waitingEndsAtWallMs - Date.now()) / 1000)
+  }
+
+  function beginRunningOptimistic() {
+    if (phase === 'running' && runStartMs) return
+    optimisticRunning = true
+    phase = 'running'
+    waitingEndsAtWallMs = 0
+    countdown = 0
+    runStartMs = performance.now()
+    serverMultiplier = 1
+    displayMultiplier = 1
+    multiplier = 1
+    chart.reset()
+    updateStatus()
+    syncButtons()
+    schedulePoll()
+  }
+
   function syncRunClock(serverElapsedSec) {
     if (!Number.isFinite(serverElapsedSec) || serverElapsedSec < 0) return
     const idealStart = performance.now() - serverElapsedSec * 1000
@@ -205,6 +247,12 @@ export function mountCrashGame({ gameHost, shell }) {
   function tickDisplayMultiplier() {
     if (phase === 'running' && runStartMs) {
       const curve = getHeadMult(getElapsedSec())
+      if (optimisticRunning) {
+        displayMultiplier = curve
+        multiplier = curve
+        serverMultiplier = curve
+        return
+      }
       displayMultiplier += (curve - displayMultiplier) * 0.22
       displayMultiplier += (serverMultiplier - displayMultiplier) * 0.08
       multiplier = displayMultiplier
@@ -243,9 +291,12 @@ export function mountCrashGame({ gameHost, shell }) {
   }
 
   function updateStatus() {
-    if (phase === 'waiting' && countdown > 0) {
+    if (phase === 'waiting') {
       statusEl.hidden = false
-      statusEl.textContent = `Starting in ${countdown.toFixed(2)}s`
+      statusEl.textContent =
+        countdown > 0
+          ? `Starting in ${countdown.toFixed(2)}s`
+          : 'Starting…'
       statusEl.dataset.tone = 'wait'
     } else {
       statusEl.hidden = true
@@ -301,9 +352,16 @@ export function mountCrashGame({ gameHost, shell }) {
     if (destroyed) return
     const prevPhase = phase
     const prevRoundId = roundId
-    phase = snap.phase ?? phase
+    const serverPhase = snap.phase ?? phase
+    const pastWaitEnd =
+      waitingEndsAtWallMs > 0 && Date.now() >= waitingEndsAtWallMs - 40
+    if (serverPhase === 'waiting' && pastWaitEnd) {
+      if (phase !== 'running') beginRunningOptimistic()
+    } else {
+      phase = serverPhase
+      if (phase === 'waiting') optimisticRunning = false
+    }
     serverMultiplier = snap.multiplier ?? serverMultiplier
-    countdown = snap.countdown ?? countdown
     roundId = snap.roundId ?? roundId
     history = snap.history ?? history
     applyUserBets(snap)
@@ -315,17 +373,32 @@ export function mountCrashGame({ gameHost, shell }) {
     if (snap.balance != null) refreshBalance({ PLN: snap.balance })
 
     if (phase === 'running') {
-      if (prevPhase !== 'running' || roundId !== prevRoundId) {
-        runStartMs = 0
-        displayMultiplier = 1
-        chart.reset()
-      }
+      waitingEndsAtWallMs = 0
       const elapsed =
         typeof snap.elapsed === 'number'
           ? snap.elapsed
           : elapsedFromMult(serverMultiplier, GROWTH_RATE)
-      syncRunClock(elapsed)
+      const freshRound = prevPhase !== 'running' || roundId !== prevRoundId
+      if (freshRound) {
+        if (elapsed <= 0.4 || optimisticRunning) {
+          runStartMs = performance.now()
+          displayMultiplier = 1
+          serverMultiplier = 1
+          multiplier = 1
+          chart.reset()
+          optimisticRunning = false
+        } else {
+          runStartMs = 0
+          displayMultiplier = 1
+          chart.reset()
+          syncRunClock(elapsed)
+          optimisticRunning = false
+        }
+      } else if (!optimisticRunning) {
+        syncRunClock(elapsed)
+      }
     } else if (phase === 'waiting') {
+      optimisticRunning = false
       runStartMs = 0
       frozenElapsedSec = 0
       frozenHeadMult = 1
@@ -333,7 +406,12 @@ export function mountCrashGame({ gameHost, shell }) {
       serverMultiplier = 1
       multiplier = 1
       chart.reset()
+      syncWaitingClock(snap)
+      countdown = localCountdownSec()
+      if (countdown <= 0) beginRunningOptimistic()
     } else if (phase === 'crashed') {
+      waitingEndsAtWallMs = 0
+      optimisticRunning = false
       multiplier = serverMultiplier
       displayMultiplier = serverMultiplier
       frozenHeadMult = serverMultiplier
@@ -364,47 +442,49 @@ export function mountCrashGame({ gameHost, shell }) {
     updateStatus()
     renderHistory()
     syncButtons()
+    if (phase !== prevPhase && pollTimer) schedulePoll()
   }
 
-  function startPollFallback() {
-    if (pollTimer || destroyed) return
-    pollTimer = window.setInterval(() => {
-      if (!destroyed) refreshState()
-    }, 1000)
+  const POLL_MS_RUNNING = 400
+  const POLL_MS_WAITING = 2500
+  const POLL_MS_WAITING_FINAL = 120
+  const POLL_MS_IDLE = 1000
+
+  function pollDelayMs() {
+    if (phase === 'running') return optimisticRunning ? 150 : POLL_MS_RUNNING
+    if (phase === 'waiting') {
+      const cd = localCountdownSec()
+      if (cd > 0 && cd <= 1.2) return POLL_MS_WAITING_FINAL
+      return POLL_MS_WAITING
+    }
+    return POLL_MS_IDLE
   }
 
-  function stopPollFallback() {
-    window.clearInterval(pollTimer)
+  function stopPolling() {
+    window.clearTimeout(pollTimer)
     pollTimer = 0
   }
 
-  function connectWs() {
-    window.clearTimeout(wsReconnectTimer)
-    wsReconnectTimer = 0
-    ws = new WebSocket(wsUrl('/games/crash/ws'))
-    ws.onopen = () => {
-      stopPollFallback()
-      refreshState()
-    }
-    ws.onmessage = (ev) => {
-      if (destroyed) return
-      try {
-        applySnapshot(JSON.parse(ev.data))
-      } catch (_) {}
-    }
-    ws.onclose = () => {
+  function schedulePoll() {
+    stopPolling()
+    if (destroyed) return
+    if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return
+    pollTimer = window.setTimeout(async () => {
+      pollTimer = 0
       if (!destroyed) {
-        startPollFallback()
-        wsReconnectTimer = window.setTimeout(connectWs, 1500)
+        await refreshState()
+        schedulePoll()
       }
-    }
-    ws.onerror = () => {
-      ws.close()
-    }
+    }, pollDelayMs())
   }
 
   function onVisibilityChange() {
-    if (!destroyed && document.visibilityState === 'visible') refreshState()
+    if (destroyed) return
+    if (document.visibilityState === 'visible') {
+      refreshState().finally(schedulePoll)
+    } else {
+      stopPolling()
+    }
   }
 
   async function refreshState() {
@@ -512,11 +592,21 @@ export function mountCrashGame({ gameHost, shell }) {
   chart.reset()
   window.addEventListener('resize', onResize)
   document.addEventListener('visibilitychange', onVisibilityChange)
-  connectWs()
-  refreshState()
+  refreshState().finally(schedulePoll)
+
+  function tickWaitingCountdown() {
+    if (phase !== 'waiting' || !waitingEndsAtWallMs) return
+    countdown = localCountdownSec()
+    if (countdown <= 0) {
+      beginRunningOptimistic()
+      return
+    }
+    updateStatus()
+  }
 
   function loop() {
     if (!destroyed) {
+      tickWaitingCountdown()
       tickDisplayMultiplier()
       setMultDisplay()
       drawGraph()
@@ -530,20 +620,12 @@ export function mountCrashGame({ gameHost, shell }) {
     playRound: primaryAction,
     destroy() {
       destroyed = true
-      window.clearTimeout(wsReconnectTimer)
-      wsReconnectTimer = 0
-      stopPollFallback()
+      stopPolling()
       stopAllSounds()
       cancelAnimationFrame(rafId)
       resizeObs?.disconnect()
       window.removeEventListener('resize', onResize)
       document.removeEventListener('visibilitychange', onVisibilityChange)
-      if (ws) {
-        ws.onmessage = null
-        ws.onclose = null
-        ws.close()
-        ws = null
-      }
     },
   }
 }

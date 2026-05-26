@@ -41,6 +41,14 @@ from ..casino_rtp import (
     resolve_rtp,
     seeded_pair,
 )
+from ..dice2_engine import (
+    DEFAULT_DIFFICULTY,
+    normalize_difficulty,
+    apply_roll,
+    build_board,
+    cashout_payout,
+    roll_dice,
+)
 from ..db import get_db, next_id, now
 from ..rate_limit import rate_limit_request
 from ..rewards_service import record_vip_activity
@@ -234,6 +242,225 @@ async def play_blitz(
         "payout": float(payout),
         "balance": float(new_bal),
     }
+
+
+# ── Dice2 ───────────────────────────────────────────────────────────────────
+
+class Dice2StartBody(BaseModel):
+    stakePln: Decimal = Field(gt=0, max_digits=20, decimal_places=2)
+    difficulty: str = DEFAULT_DIFFICULTY
+
+
+async def _get_dice2_session(user_id: int) -> dict | None:
+    return await get_db().dice2_sessions.find_one(
+        {"user_id": user_id, "status": "playing"},
+    )
+
+
+def _dice2_projected_payout(session: dict) -> float:
+    return cashout_payout(
+        float(session["stake_pln"]),
+        float(session["combined_mult"]),
+    )
+
+
+def _dice2_payload(session: dict, balance: float) -> dict:
+    return {
+        "ok": True,
+        "sessionId": session["id"],
+        "difficulty": session.get("difficulty", DEFAULT_DIFFICULTY),
+        "tiles": session["tiles"],
+        "pathPos": int(session["path_pos"]),
+        "combinedMult": float(session["combined_mult"]),
+        "hasRolled": bool(session.get("has_rolled")),
+        "projectedPayout": _dice2_projected_payout(session),
+        "balance": balance,
+    }
+
+
+@router.post("/dice2/start")
+async def dice2_start(
+    request: Request,
+    payload: Dice2StartBody,
+    user: dict = Depends(get_current_user),
+) -> dict:
+    await rate_limit_request(request, "games.dice2", 120)
+    db = get_db()
+    difficulty = normalize_difficulty(payload.difficulty)
+    existing = await _get_dice2_session(user["id"])
+    if existing:
+        user_doc = await db.users.find_one({"id": user["id"]})
+        bal = float(user_doc["balance_pln"]) if user_doc else 0.0
+        return {"ok": True, "resumed": True, **_dice2_payload(existing, bal)}
+
+    stake = payload.stakePln
+    balance_after_lock = await _lock_stake(user["id"], stake)
+    seed = secrets.token_hex(32)
+    session_id = await next_id("dice2_sessions")
+    session_doc = {
+        "id": session_id,
+        "user_id": user["id"],
+        "stake_pln": stake,
+        "status": "playing",
+        "difficulty": difficulty,
+        "server_seed": seed,
+        "tiles": build_board(difficulty=difficulty),
+        "path_pos": 0,
+        "combined_mult": 1.0,
+        "roll_count": 0,
+        "has_rolled": False,
+        "created_at": now(),
+    }
+    await db.dice2_sessions.insert_one(session_doc)
+    return {
+        "ok": True,
+        "resumed": False,
+        **_dice2_payload(session_doc, float(balance_after_lock)),
+    }
+
+
+@router.post("/dice2/roll")
+async def dice2_roll(
+    request: Request,
+    user: dict = Depends(get_current_user),
+) -> dict:
+    await rate_limit_request(request, "games.dice2", 120)
+    session = await _get_dice2_session(user["id"])
+    if not session:
+        raise HTTPException(status_code=400, detail="no active dice2 round")
+
+    seed = session["server_seed"]
+    roll_index = int(session.get("roll_count", 0))
+    die_a, die_b = roll_dice(seed, roll_index)
+    tiles = session["tiles"]
+    path_pos = int(session["path_pos"])
+    combined_mult = float(session["combined_mult"])
+
+    new_pos, new_mult, busted, tile_mult = apply_roll(
+        tiles,
+        path_pos,
+        combined_mult,
+        die_a,
+        die_b,
+    )
+
+    session["path_pos"] = new_pos
+    session["combined_mult"] = new_mult
+    session["roll_count"] = roll_index + 1
+    session["has_rolled"] = True
+
+    body: dict = {
+        "ok": True,
+        "sessionId": session["id"],
+        "dieA": die_a,
+        "dieB": die_b,
+        "pathPos": new_pos,
+        "combinedMult": new_mult,
+        "busted": busted,
+        "tileMult": tile_mult,
+        "hasRolled": True,
+    }
+
+    if busted:
+        new_bal = await _finish_dice2(
+            user["id"],
+            session,
+            payout=Decimal("0.00"),
+            details={
+                "dieA": die_a,
+                "dieB": die_b,
+                "pathPos": new_pos,
+                "busted": True,
+                "combinedMult": combined_mult,
+            },
+        )
+        body["payout"] = 0.0
+        body["balance"] = float(new_bal)
+        return body
+
+    await get_db().dice2_sessions.update_one(
+        {"_id": session["_id"]},
+        {
+            "$set": {
+                "path_pos": new_pos,
+                "combined_mult": new_mult,
+                "roll_count": roll_index + 1,
+                "has_rolled": True,
+            },
+        },
+    )
+    user_doc = await get_db().users.find_one({"id": user["id"]})
+    body["balance"] = float(user_doc["balance_pln"]) if user_doc else 0.0
+    body["projectedPayout"] = _dice2_projected_payout(session)
+    return body
+
+
+@router.post("/dice2/cashout")
+async def dice2_cashout(
+    request: Request,
+    user: dict = Depends(get_current_user),
+) -> dict:
+    await rate_limit_request(request, "games.dice2", 120)
+    session = await _get_dice2_session(user["id"])
+    if not session:
+        raise HTTPException(status_code=400, detail="no active dice2 round")
+    if not session.get("has_rolled"):
+        raise HTTPException(status_code=400, detail="roll before cashout")
+
+    stake_f = float(session["stake_pln"])
+    combined_mult = float(session["combined_mult"])
+    payout_f = cashout_payout(stake_f, combined_mult)
+    payout = Decimal(str(payout_f)).quantize(Decimal("0.01"))
+
+    new_bal = await _finish_dice2(
+        user["id"],
+        session,
+        payout=payout,
+        details={
+            "pathPos": int(session["path_pos"]),
+            "combinedMult": combined_mult,
+            "cashout": True,
+        },
+    )
+    return {
+        "ok": True,
+        "combinedMult": combined_mult,
+        "payout": float(payout),
+        "balance": float(new_bal),
+    }
+
+
+async def _finish_dice2(
+    user_id: int,
+    session: dict,
+    *,
+    payout: Decimal,
+    details: dict,
+) -> Decimal:
+    db = get_db()
+    stake = session["stake_pln"]
+    updated = await db.users.find_one_and_update(
+        {"id": user_id},
+        {"$inc": {"balance_pln": payout}},
+        return_document=ReturnDocument.AFTER,
+    )
+    if session.get("_id") is not None:
+        await db.dice2_sessions.delete_one({"_id": session["_id"]})
+    seed = session.get("server_seed", "")
+    await db.casino_rounds.insert_one(
+        {
+            "id": await next_id("casino_rounds"),
+            "user_id": user_id,
+            "game": "dice2",
+            "stake_pln": stake,
+            "payout_pln": payout,
+            "details": details,
+            "server_seed": seed,
+            "created_at": now(),
+        },
+    )
+    await record_vip_activity(user_id, stake, payout)
+    return updated["balance_pln"]
 
 
 # ── Blackjack ────────────────────────────────────────────────────────────────

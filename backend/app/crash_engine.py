@@ -12,7 +12,6 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Any, Optional
 
-from fastapi import WebSocket
 from pymongo import ReturnDocument
 
 from .casino_rtp import crash_multiplier, crash_payout_boost, resolve_rtp
@@ -27,8 +26,6 @@ TICK_INTERVAL = 0.05
 GROWTH_RATE = 0.0693
 HISTORY_MAX = 5
 _CRASH_HISTORY_DOC_ID = "recent"
-_MAX_WS_PER_IP = 5
-_WS_IDLE_SEC = 300.0
 
 
 def _crash_point(seed: str) -> float:
@@ -70,8 +67,6 @@ class CrashEngine:
         self._round: Optional[CrashRound] = None
         self._queued: dict[int, CrashBet] = {}
         self._history: list[float] = []
-        self._clients: dict[WebSocket, Optional[int]] = {}
-        self._ws_per_ip: dict[str, int] = {}
         self._lock = asyncio.Lock()
         self._task: Optional[asyncio.Task] = None
         self._round_counter = 0
@@ -92,40 +87,6 @@ class CrashEngine:
         except asyncio.CancelledError:
             pass
         self._task = None
-        for ws in list(self._clients):
-            try:
-                await ws.close()
-            except Exception:
-                pass
-        self._clients.clear()
-
-    async def connect(
-        self,
-        ws: WebSocket,
-        user_id: Optional[int] = None,
-        *,
-        client_ip: str = "unknown",
-    ) -> None:
-        ip = client_ip or "unknown"
-        if self._ws_per_ip.get(ip, 0) >= _MAX_WS_PER_IP:
-            await ws.close(code=1008, reason="too many connections")
-            return
-        self._ws_per_ip[ip] = self._ws_per_ip.get(ip, 0) + 1
-        await ws.accept()
-        self._clients[ws] = user_id
-        try:
-            await ws.send_json(self.public_snapshot(user_id))
-            while True:
-                await asyncio.wait_for(ws.receive_text(), timeout=_WS_IDLE_SEC)
-        except Exception:
-            pass
-        finally:
-            self._clients.pop(ws, None)
-            count = self._ws_per_ip.get(ip, 1) - 1
-            if count <= 0:
-                self._ws_per_ip.pop(ip, None)
-            else:
-                self._ws_per_ip[ip] = count
 
     def public_snapshot(self, user_id: Optional[int] = None) -> dict[str, Any]:
         rnd = self._round
@@ -144,6 +105,9 @@ class CrashEngine:
 
         mult = self._current_multiplier()
         countdown = max(0.0, rnd.waiting_ends_at - time.monotonic()) if rnd.phase == "waiting" else 0.0
+        waiting_ends_at_ms: Optional[int] = None
+        if rnd.phase == "waiting":
+            waiting_ends_at_ms = int((time.time() + max(0.0, countdown)) * 1000)
         elapsed = 0.0
         if rnd.phase == "running" and rnd.running_started_at is not None:
             elapsed = max(0.0, time.monotonic() - rnd.running_started_at)
@@ -154,6 +118,7 @@ class CrashEngine:
             "roundId": rnd.round_id,
             "multiplier": mult,
             "countdown": round(countdown, 2),
+            "waitingEndsAt": waiting_ends_at_ms,
             "history": list(self._history),
             "playerCount": len(rnd.bets),
             "activeCount": active,
@@ -229,7 +194,6 @@ class CrashEngine:
                 self._queued[user_id] = bet
 
             snap = self.public_snapshot(user_id)
-        await self._broadcast()
         return snap
 
     async def cashout(self, user_id: int) -> dict[str, Any]:
@@ -257,7 +221,6 @@ class CrashEngine:
             snap["payout"] = float(payout)
             snap["cashoutAt"] = mult
 
-        await self._broadcast()
         return snap
 
     async def _user_rtp(self, user_id: int) -> float:
@@ -300,7 +263,6 @@ class CrashEngine:
             else:
                 raise ValueError("no cancellable bet")
 
-        await self._broadcast()
         return snap
 
     async def _credit_payout(
@@ -467,17 +429,6 @@ class CrashEngine:
                 if now_mono - rnd.crashed_at >= CRASHED_SEC:
                     await self._new_round()
 
-        await self._broadcast()
-
-    async def _broadcast(self) -> None:
-        dead: list[WebSocket] = []
-        for ws, user_id in list(self._clients.items()):
-            try:
-                await ws.send_json(self.public_snapshot(user_id))
-            except Exception:
-                dead.append(ws)
-        for ws in dead:
-            self._clients.pop(ws, None)
 
 
 _engine: Optional[CrashEngine] = None

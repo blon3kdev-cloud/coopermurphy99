@@ -131,6 +131,20 @@
   pointer-events: none;
 }
 
+.featured-kasyno__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #1a2744 0%, #0f1729 100%);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .featured-kasyno__card--soon {
   cursor: default;
   pointer-events: none;
