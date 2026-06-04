@@ -12,7 +12,7 @@
     "liveline": "^0.0.7",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "react-router-dom": "^6.30.3",
+    "react-router-dom": "^7.16.0",
     "react-scripts": "5.0.1",
     "react-toastify": "^11.1.0",
     "web-vitals": "^2.1.4"
