@@ -21,4 +21,4 @@ python-multipart==0.0.20
 pdfplumber==0.11.4
 Pillow>=10.4.0
 pytesseract>=0.3.13
-numpy>=1.26.0
+numpy>=2.4.6
