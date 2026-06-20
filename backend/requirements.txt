@@ -15,7 +15,7 @@ tzdata==2024.2
 bip-utils==2.9.3
 qrcode[pil]==8.0
 solders==0.21.0
-eth-account==0.13.4
+eth-account==0.13.7
 embit==0.8.0
 python-multipart==0.0.20
 pdfplumber==0.11.4
